@@ -1108,3 +1108,59 @@ footer { background: var(--dark); color: var(--white); padding-top: 72px; }
     font-size: 24px;
   }
 }
+
+
+/* Final full-width override: the PA card is a direct sibling of the Licia card,
+   not a constrained item inside the multi-column project-grid. */
+.other-projects > .project-card-wide,
+.container > .project-card-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 420px;
+  grid-column: auto;
+  justify-self: stretch;
+  box-sizing: border-box;
+  align-self: stretch;
+  margin: 0;
+}
+.project-card-wide .project-visual {
+  height: 100%;
+  min-height: 420px;
+  aspect-ratio: auto;
+}
+.project-card-wide .card-content {
+  min-width: 0;
+  justify-content: center;
+}
+@media (max-width: 1050px) {
+  .other-projects > .project-card-wide,
+  .container > .project-card-wide {
+    min-height: 390px;
+  }
+  .project-card-wide .project-visual {
+    min-height: 390px;
+  }
+}
+@media (max-width: 760px) {
+  .other-projects > .project-card-wide,
+  .container > .project-card-wide {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    min-height: 390px;
+  }
+  .project-card-wide .project-visual {
+    min-height: 390px;
+  }
+}
+@media (max-width: 420px) {
+  .other-projects > .project-card-wide,
+  .container > .project-card-wide {
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+    min-height: 410px;
+  }
+  .project-card-wide .project-visual {
+    min-height: 410px;
+  }
+}

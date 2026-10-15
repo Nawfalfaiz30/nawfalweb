@@ -184,8 +184,8 @@ function SocialIcons() {
   return <div className="social-icons">{socialLinks.map((item) => <a key={item.name} href={item.href} target={item.kind === "email" ? undefined : "_blank"} rel={item.kind === "email" ? undefined : "noopener noreferrer"} aria-label={item.name}><Icon name={item.icon} /></a>)}</div>;
 }
 
-function ProjectCard({ project }: { project: { title: string; summary: string; tags: string[]; href?: string; number?: string; detailTo?: string } }) {
-  return <article className="project-card">
+function ProjectCard({ project, wide = false }: { project: { title: string; summary: string; tags: string[]; href?: string; number?: string; detailTo?: string }; wide?: boolean }) {
+  return <article className={"project-card" + (wide ? " project-card-wide" : "")}>
     <div className="project-visual visual-1"><img src="/images/project-counting-device.jpg" alt="Perangkat penghitung pemilih berbasis ESP32 dengan layar LCD" /><span>Perangkat uji · Buku PA</span></div>
     <div className="card-content">
       <div className="meta"><span>Proyek akhir · PENS</span><span>{project.number ?? "01"}</span></div>
@@ -240,14 +240,13 @@ function ArticleEmpty() {
 function PostCard({ post }: { post: (typeof publishedPosts)[number] }) {
   const formattedDate = new Intl.DateTimeFormat("id-ID", { dateStyle: "long" })
     .format(new Date(post.date + "T00:00:00"));
-  const isLiciaArticle = post.slug === "licia-personal-life-os";
   return <article className="article-card post-card">
     <div className="post-card-visual">
       {post.cover
         ? <img src={post.cover} alt={"Sampul artikel " + post.title} loading="lazy" decoding="async" />
-        : <div className={"post-card-cover-art" + (isLiciaArticle ? " is-licia" : "")} aria-hidden="true">
+        : <div className="post-card-cover-art" aria-hidden="true">
             <span>{post.tags.join(" · ") || "Artikel"}</span>
-            <strong>{isLiciaArticle ? "L" : "Aa"}</strong>
+            <strong>Aa</strong>
           </div>}
     </div>
     <div className="article-content">
@@ -278,7 +277,7 @@ function Home() {
     </section>
     <section className="intro-strip"><div className="container intro-grid"><span>01 — Tentang</span><h2>Sebuah ruang untuk memperkenalkan diri melalui karya dan pemikiran.</h2><div><p>Website ini merangkum perjalanan, eksplorasi, proyek yang saya bangun, serta kanal komunikasi resmi dalam satu tempat.</p><ButtonLink to="/tentang" variant="text">Kenali Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
     <section className="section"><div className="container"><SectionHeading eyebrow="Proyek unggulan" title="Software yang menyatukan banyak bagian kehidupan." description="Licia adalah proyek utama yang sedang saya kembangkan: Personal Life OS dengan AI, sinkronisasi, dan alur kerja yang saling terhubung." action={<ButtonLink to={`/proyek/${liciaProject.slug}`} variant="secondary">Studi kasus <Icon name="arrow" size={17} /></ButtonLink>} /><LiciaProjectCard /></div></section>
-    <section className="section"><div className="container"><SectionHeading eyebrow="Proyek akademik" title="Teknologi untuk data pemilu." description="Proyek akhir D3 yang menggabungkan perangkat embedded, pengolahan citra, dan AI vision." action={<ButtonLink to="/proyek" variant="secondary">Semua proyek <Icon name="arrow" size={17} /></ButtonLink>} /><div className="project-grid"><ProjectCard project={featuredProject} /></div></div></section>
+    <section className="section"><div className="container"><SectionHeading eyebrow="Proyek akademik" title="Teknologi untuk data pemilu." description="Proyek akhir D3 yang menggabungkan perangkat embedded, pengolahan citra, dan AI vision." action={<ButtonLink to="/proyek" variant="secondary">Semua proyek <Icon name="arrow" size={17} /></ButtonLink>} /><ProjectCard project={featuredProject} wide /></div></section>
     <section className="section section-muted"><div className="container"><SectionHeading eyebrow="Jurnal" title="Tulisan & catatan." description="Catatan teknis, proses belajar, dan hal-hal yang saya temui saat membangun sebuah sistem." />{publishedPosts.length ? <div className="blog-grid">{publishedPosts.slice(0, 2).map((post) => <PostCard key={post.slug} post={post} />)}</div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/blog" variant="secondary">Lihat Blog <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
     <section className="section"><div className="container novel-card"><div className="book-cover photo-cover"><img src="/images/hujan-dan-payung-biru-cover.jpg" alt="Sampul novel Hujan dan Payung Biru karya Nawfal Ulinnuha Faiz" loading="lazy" decoding="async" /></div><div className="novel-copy"><Eyebrow>Karya sastra</Eyebrow><h2>Saya juga menulis cerita.</h2><p><em>Hujan dan Payung Biru</em> diterbitkan oleh Beranda pada 2025. Saya juga pernah menulis cerita untuk JanakaPens Komik.</p><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat detail buku <Icon name="external" size={17} /></a></div></div></section>
     <ContactBand />
@@ -408,7 +407,7 @@ function Projects() {
     <section className="section no-top"><div className="container">
       <SectionHeading eyebrow="Produk unggulan" title="Membangun sistem yang terasa menyatu." description="Licia menempati posisi utama karena menghubungkan AI dan beragam alur kerja pribadi dalam satu Personal Life OS." />
       <LiciaProjectCard />
-      <div className="other-projects"><SectionHeading eyebrow="Proyek akademik" title="Tabulasi Suara Kertas Plano Pemilu" description={featuredProject.summary} /><div className="project-grid"><ProjectCard project={featuredProject} /></div></div>
+      <div className="other-projects"><SectionHeading eyebrow="Proyek akademik" title="Tabulasi Suara Kertas Plano Pemilu" description={featuredProject.summary} /><ProjectCard project={featuredProject} wide /></div>
       <div className="github-section"><div className="github-heading"><div><Eyebrow>GitHub</Eyebrow><h2>Repositori publik</h2></div><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">Lihat profil <Icon name="arrow" size={17} /></a></div>{loading ? <p className="muted-copy" aria-live="polite">Memuat profil dan repositori publik…</p> : profile && <div className="github-profile"><strong>{profile.name || siteConfig.githubUsername}</strong>{profile.bio && <p>{profile.bio}</p>}<span>{profile.public_repos} repositori publik · {profile.followers} pengikut</span></div>}{!loading && repos.length ? <div className="repo-grid">{repos.map((repo) => <article className="repo-card" key={repo.id}><div className="repo-top"><Icon name="code" /><span>{repo.language ?? "Repositori"}</span></div><h3><a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a></h3><p>{repo.description || "Repositori publik dari GitHub."}</p><div className="repo-meta"><span>★ {repo.stargazers_count}</span><span>Diperbarui {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(new Date(repo.updated_at))}</span></div></article>)}</div> : !loading && <div className="empty-note"><Icon name="github" /><div><strong>{unavailable ? "Repositori belum dapat dimuat." : "Belum ada repositori publik."}</strong><span>{unavailable ? "Silakan kunjungi profil GitHub untuk melihat repositori terbaru." : "Repositori akan tampil di sini bila tersedia."}</span></div></div>}</div>
     </div></section>
   </Shell>;
@@ -527,7 +526,7 @@ function ArticleDetail() {
           <figure className="detail-cover article-detail-cover">
             {post.cover
               ? <img src={post.cover} alt={"Dokumentasi " + post.title} />
-              : <div className={"article-detail-cover-art" + (post.slug === "licia-personal-life-os" ? " is-licia" : "")} aria-hidden="true"><span>{post.tags.join(" · ") || "Artikel"}</span><strong>{post.slug === "licia-personal-life-os" ? "L" : "Aa"}</strong></div>}
+              : <div className="article-detail-cover-art" aria-hidden="true"><span>{post.tags.join(" · ") || "Artikel"}</span><strong>Aa</strong></div>}
             <figcaption>{post.cover ? "Dokumentasi visual · " + post.title : "Catatan dan pemikiran penulis"}</figcaption>
           </figure>
         </div>
