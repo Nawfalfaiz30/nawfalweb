@@ -238,7 +238,25 @@ function ArticleEmpty() {
 }
 
 function PostCard({ post }: { post: (typeof publishedPosts)[number] }) {
-  return <article className="article-card"><div className="article-content"><div className="meta"><span>{post.tags.join(" · ") || "Artikel"}</span><span>{new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(`${post.date}T00:00:00`))}</span></div><h3>{post.title}</h3><p>{post.description}</p><div className="article-foot"><ButtonLink to={`/blog/${post.slug}`} variant="text">Baca artikel <Icon name="arrow" size={17} /></ButtonLink></div></div></article>;
+  const formattedDate = new Intl.DateTimeFormat("id-ID", { dateStyle: "long" })
+    .format(new Date(post.date + "T00:00:00"));
+  const isLiciaArticle = post.slug === "licia-personal-life-os";
+  return <article className="article-card post-card">
+    <div className="post-card-visual">
+      {post.cover
+        ? <img src={post.cover} alt={"Sampul artikel " + post.title} loading="lazy" decoding="async" />
+        : <div className={"post-card-cover-art" + (isLiciaArticle ? " is-licia" : "")} aria-hidden="true">
+            <span>{post.tags.join(" · ") || "Artikel"}</span>
+            <strong>{isLiciaArticle ? "L" : "Aa"}</strong>
+          </div>}
+    </div>
+    <div className="article-content">
+      <div className="meta"><span>{post.tags.join(" · ") || "Artikel"}</span><span>{formattedDate}</span></div>
+      <h3>{post.title}</h3>
+      <p>{post.description}</p>
+      <div className="article-foot"><ButtonLink to={"/blog/" + post.slug} variant="text">Baca artikel <Icon name="arrow" size={17} /></ButtonLink></div>
+    </div>
+  </article>;
 }
 
 function Home() {
@@ -436,8 +454,8 @@ function ProjectDetail() {
 function Blog() {
   const [search, setSearch] = useState("");
   const posts = publishedPosts.filter((post) => `${post.title} ${post.description} ${post.tags.join(" ")}`.toLowerCase().includes(search.toLowerCase()));
-  return <Shell><PageHero eyebrow="Jurnal pribadi" title="Tulisan & Catatan" description="Catatan tentang teknologi, proses belajar, dan penulisan akan diterbitkan di sini." />
-    <section className="section no-top"><div className="container">{publishedPosts.length > 0 && <div className="blog-toolbar"><div><strong>{posts.length} tulisan</strong><span>Markdown · diurutkan terbaru</span></div><label className="search"><span className="sr-only">Cari artikel</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari artikel..." /></label></div>}{posts.length ? <div className="blog-grid">{posts.map((post) => <PostCard key={post.slug} post={post} />)}</div> : publishedPosts.length ? <div className="empty-note"><Icon name="copy" /><div><strong>Tulisan tidak ditemukan.</strong><span>Coba kata kunci yang berbeda.</span></div></div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/kontak" variant="secondary">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
+  return <Shell><PageHero eyebrow="Jurnal pribadi" title="Tulisan & Catatan" description="Artikel dan catatan tentang produk yang saya bangun, teknologi, proses belajar, serta penulisan." />
+    <section className="section no-top"><div className="container">{publishedPosts.length > 0 && <div className="blog-toolbar"><div><strong>{posts.length} tulisan</strong><span>Artikel Markdown · diurutkan terbaru</span></div><label className="search"><span className="sr-only">Cari artikel</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari artikel..." /></label></div>}{posts.length ? <div className="blog-grid blog-grid-two">{posts.map((post) => <PostCard key={post.slug} post={post} />)}</div> : publishedPosts.length ? <div className="empty-note"><Icon name="copy" /><div><strong>Tulisan tidak ditemukan.</strong><span>Coba kata kunci yang berbeda.</span></div></div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/kontak" variant="secondary">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
   </Shell>;
 }
 
@@ -509,7 +527,7 @@ function ArticleDetail() {
           <figure className="detail-cover article-detail-cover">
             {post.cover
               ? <img src={post.cover} alt={"Dokumentasi " + post.title} />
-              : <div className="article-detail-cover-art" aria-hidden="true"><span>{post.tags.join(" · ") || "Artikel"}</span><strong>Aa</strong></div>}
+              : <div className={"article-detail-cover-art" + (post.slug === "licia-personal-life-os" ? " is-licia" : "")} aria-hidden="true"><span>{post.tags.join(" · ") || "Artikel"}</span><strong>{post.slug === "licia-personal-life-os" ? "L" : "Aa"}</strong></div>}
             <figcaption>{post.cover ? "Dokumentasi visual · " + post.title : "Catatan dan pemikiran penulis"}</figcaption>
           </figure>
         </div>
