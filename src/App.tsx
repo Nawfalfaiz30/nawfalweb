@@ -176,7 +176,7 @@ function Home() {
         <div className="hero-copy">
           <Eyebrow>Elektronika · Embedded · Web</Eyebrow>
           <h1>Halo, saya Nawfal <em>Ulinnuha Faiz.</em></h1>
-          <p>Lulusan D3 Teknik Elektronika PENS yang senang merangkai solusi dari perangkat, perangkat lunak, dan cerita. Proyek akhir saya mengolah data Kertas C Plano; novel pertama saya, <em>Hujan dan Payung Biru</em>, terbit pada 2025.</p>
+          <p>Lulusan D3 Teknik Elektronika PENS yang senang merangkai solusi dari perangkat, perangkat lunak, dan cerita. Proyek akhir saya mengolah data Kertas C Plano; novel <em>Hujan dan Payung Biru</em> terbit pada 2025.</p>
           <div className="button-row"><ButtonLink to="/proyek">Jelajahi Proyek <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/cv" variant="secondary">Lihat CV</ButtonLink></div>
           <div className="hero-social"><span>Terhubung melalui</span><SocialIcons /></div>
         </div>
@@ -252,7 +252,7 @@ function ArticleDetail() {
 
 function Novel() {
   return <Shell><PageHero eyebrow="Karya sastra" title="Hujan dan Payung Biru" description="Novel karya Nawfal Ulinnuha Faiz, diterbitkan oleh Beranda pada 2025." />
-    <section className="section no-top"><div className="container novel-page-grid"><div className="book-cover large" aria-label="Visualisasi editorial untuk novel Hujan dan Payung Biru"><span>Novel · Penerbit Beranda</span><strong>Hujan dan Payung Biru</strong><small>Visualisasi editorial · Nawfal Ulinnuha Faiz</small></div><div><span className="status-pill">Novel · 2025</span><h2>Sebuah cerita dalam 190 halaman.</h2><p><em>Hujan dan Payung Biru</em> merupakan novel perdana saya. Saya juga pernah mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital bersama JanakaPens Komik. Sinopsis belum dicantumkan di halaman toko, jadi saya belum menambahkan ringkasan cerita agar informasi tetap akurat.</p><dl><div><dt>Penulis</dt><dd>Nawfal Ulinnuha Faiz</dd></div><div><dt>Penerbit</dt><dd>Beranda</dd></div><div><dt>Tahun</dt><dd>2025</dd></div><div><dt>ISBN</dt><dd>978-623-5453-49-1</dd></div><div><dt>Format</dt><dd>14 × 21 cm · vi + 190 halaman</dd></div></dl><div className="button-row"><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Kunjungi toko penerbit <Icon name="external" size={17} /></a><a className="button button-secondary" href="https://tirtabuanamedia.co.id/shop/buku-fiksi-dan-sastra/novel/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat data buku <Icon name="external" size={17} /></a></div><p className="source-note">Visual sampul di halaman ini adalah ilustrasi editorial, bukan reproduksi sampul resmi.</p></div></div></section>
+    <section className="section no-top"><div className="container novel-page-grid"><div className="book-cover large" aria-label="Visualisasi editorial untuk novel Hujan dan Payung Biru"><span>Novel · Penerbit Beranda</span><strong>Hujan dan Payung Biru</strong><small>Visualisasi editorial · Nawfal Ulinnuha Faiz</small></div><div><span className="status-pill">Novel · 2025</span><h2>Sebuah cerita dalam 190 halaman.</h2><p>Saya menulis novel <em>Hujan dan Payung Biru</em>. Saya juga pernah mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital bersama JanakaPens Komik. Sinopsis belum dicantumkan di halaman toko, jadi saya belum menambahkan ringkasan cerita agar informasi tetap akurat.</p><dl><div><dt>Penulis</dt><dd>Nawfal Ulinnuha Faiz</dd></div><div><dt>Penerbit</dt><dd>Beranda</dd></div><div><dt>Tahun</dt><dd>2025</dd></div><div><dt>ISBN</dt><dd>978-623-5453-49-1</dd></div><div><dt>Format</dt><dd>14 × 21 cm · vi + 190 halaman</dd></div></dl><div className="button-row"><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Kunjungi toko penerbit <Icon name="external" size={17} /></a><a className="button button-secondary" href="https://tirtabuanamedia.co.id/shop/buku-fiksi-dan-sastra/novel/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat data buku <Icon name="external" size={17} /></a></div><p className="source-note">Visual sampul di halaman ini adalah ilustrasi editorial, bukan reproduksi sampul resmi.</p></div></div></section>
   </Shell>;
 }
 
@@ -341,3 +341,4 @@ function App() {
 }
 
 export default App;
+
