@@ -15,6 +15,14 @@ export const socialLinks = [
   { name: "Email", icon: "mail", description: "Kirim pesan melalui email.", href: `mailto:${siteConfig.email}`, kind: "email" },
 ] as const;
 
+export const liciaProject = {
+  slug: "licia-personal-life-os",
+  title: "Licia — Personal Life OS",
+  summary: "Licia 2.0 adalah Personal Life OS yang menghubungkan AI, produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi dalam satu sistem pribadi dengan dukungan PWA, offline recovery, serta sinkronisasi multi-perangkat.",
+  href: "https://github.com/Nawfalfaiz30/licia",
+  tags: ["Next.js 16", "React 19", "TypeScript", "Supabase", "AI · Offline-first"],
+};
+
 export const featuredProject = {
   slug: "tabulasi-suara-kertas-plano",
   title: "Tabulasi Suara Kertas Plano Pemilu",

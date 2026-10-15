@@ -1,6 +1,16 @@
 # nawfalweb
 
-Website pribadi dan Social Hub Nawfal Ulinnuha Faiz. Aplikasi menggunakan React, TypeScript, dan Vite sesuai scaffold desain; konten awal disimpan di repository. Tidak ada database atau Supabase karena MVP tidak perlu menyimpan konten maupun pesan.
+Website pribadi dan Social Hub Nawfal Ulinnuha Faiz. Aplikasi portofolio menggunakan React, TypeScript, dan Vite; konten disimpan di repository dan formulir kontak diteruskan melalui API Vercel. Tidak ada database aplikasi untuk portofolio ini. Proyek produk unggulan, Licia, dikembangkan terpisah di repository tersendiri.
+
+## Proyek unggulan
+
+### Licia — Personal Life OS
+
+Licia 2.0 adalah produk web full-stack untuk menghubungkan AI, produktivitas, catatan, kalender, fokus, kebiasaan, kesehatan, keuangan, dan refleksi dalam satu sistem pribadi. Repo utamanya menggunakan Next.js, React, TypeScript, dan Supabase, dengan dukungan PWA/offline recovery, sinkronisasi multi-perangkat, reminder persisten, serta guardrail untuk tindakan AI.
+
+- Repository: [Nawfalfaiz30/licia](https://github.com/Nawfalfaiz30/licia)
+- Studi kasus di situs portofolio: `/proyek/licia-personal-life-os`
+- Proyek akhir D3 berupa sistem tabulasi suara Kertas C Plano tetap ditampilkan sebagai proyek akademik unggulan kedua.
 
 ## Menjalankan lokal
 

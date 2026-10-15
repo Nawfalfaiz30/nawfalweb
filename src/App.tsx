@@ -1,6 +1,6 @@
-import { FormEvent, ReactNode, useEffect, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { featuredProject, siteConfig, socialLinks } from "./config/site";
+import { featuredProject, liciaProject, siteConfig, socialLinks } from "./config/site";
 import { getPost, publishedPosts, renderMarkdown } from "./lib/content";
 
 type IconName =
@@ -66,6 +66,7 @@ function Link({
 }) {
   if (external) return <a className={className} href={to} target="_blank" rel="noopener noreferrer">{children}</a>;
   return <a className={className} href={to} onClick={(event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     onClick?.();
     event.preventDefault();
     window.history.pushState({}, "", to);
@@ -80,15 +81,45 @@ function ButtonLink({ to, children, variant = "primary", external = false }: { t
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const path = window.location.pathname;
   useEffect(() => {
     if (!open) return;
     const priorOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    const trigger = menuButtonRef.current;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(menuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? []);
+      if (!focusable.length) {
+        event.preventDefault();
+        menuRef.current?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !menuRef.current?.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !menuRef.current?.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", closeOnEscape);
-    document.querySelector<HTMLElement>(".mobile-menu button, .mobile-menu a")?.focus();
-    return () => { document.body.style.overflow = priorOverflow; window.removeEventListener("keydown", closeOnEscape); };
+    menuRef.current?.querySelector<HTMLElement>(".mobile-menu-top button, nav a")?.focus();
+    return () => {
+      document.body.style.overflow = priorOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+      if (trigger?.isConnected) trigger.focus();
+    };
   }, [open]);
   return <>
     <header className="site-header">
@@ -99,11 +130,11 @@ function Header() {
         </nav>
         <div className="header-actions">
           <ButtonLink to="/kontak">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink>
-          <button className="menu-button" aria-label="Buka menu" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(true)}><Icon name="menu" /></button>
+          <button ref={menuButtonRef} className="menu-button" aria-label="Buka menu" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(true)}><Icon name="menu" /></button>
         </div>
       </div>
     </header>
-    {open && createPortal(<div className="mobile-menu" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigasi utama">
+    {open && createPortal(<div ref={menuRef} className="mobile-menu" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigasi utama" tabIndex={-1}>
       <div className="mobile-menu-top">
         <span className="wordmark"><span className="wordmark-mark">N</span><span>Menu</span></span>
         <button className="icon-button" aria-label="Tutup menu" onClick={() => setOpen(false)}><Icon name="close" /></button>
@@ -164,6 +195,40 @@ function ProjectCard({ project }: { project: { title: string; summary: string; t
   </article>;
 }
 
+function LiciaProjectVisual() {
+  return <div className="licia-preview" role="img" aria-label="Ilustrasi tampilan pembuka Licia Personal Life OS">
+    <div className="licia-preview-header"><span className="licia-preview-brand"><b>L</b> LICIA PERSONAL LIFE OS</span><span className="licia-preview-version">v0.58.0</span></div>
+    <div className="licia-preview-body">
+      <span className="licia-preview-kicker">YOUR LIFE, CONNECTED</span>
+      <h3>Satu ruang untuk berpikir, merencanakan, dan menjalani hidup.</h3>
+      <p>Tugas, kalender, catatan, keuangan, kebiasaan, fokus, dan AI bekerja sebagai satu sistem.</p>
+      <div className="licia-preview-actions"><span>Masuk ke Licia</span><span>Lihat panduan</span></div>
+    </div>
+    <div className="licia-preview-features">
+      <div><strong>Hari Ini</strong><span>Agenda & prioritas</span></div>
+      <div><strong>AI kontekstual</strong><span>Aksi terverifikasi</span></div>
+      <div><strong>Offline-first</strong><span>Sinkronisasi kembali</span></div>
+      <div><strong>Privasi</strong><span>Kontrol akses & audit</span></div>
+    </div>
+  </div>;
+}
+
+function LiciaProjectCard() {
+  return <article className="licia-project-card">
+    <LiciaProjectVisual />
+    <div className="licia-project-copy">
+      <div className="meta"><span>Produk unggulan · Personal Life OS</span><span>01</span></div>
+      <h3>{liciaProject.title}</h3>
+      <p>{liciaProject.summary}</p>
+      <div className="tags">{liciaProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+      <div className="button-row">
+        <ButtonLink to={`/proyek/${liciaProject.slug}`}>Baca studi kasus <Icon name="arrow" size={17} /></ButtonLink>
+        <a className="button button-secondary" href={liciaProject.href} target="_blank" rel="noopener noreferrer">Lihat repository <Icon name="external" size={17} /></a>
+      </div>
+    </div>
+  </article>;
+}
+
 function ArticleEmpty() {
   return <div className="empty-note"><Icon name="copy" /><div><strong>Belum ada tulisan yang dipublikasikan.</strong><span>Artikel akan muncul di sini setelah siap dibagikan.</span></div></div>;
 }
@@ -177,25 +242,27 @@ function Home() {
     <section className="hero">
       <div className="container hero-grid">
         <div className="hero-copy">
-          <Eyebrow>Elektronika · Embedded · Web</Eyebrow>
+          <Eyebrow>Software · Embedded · Cerita</Eyebrow>
           <h1>Halo, saya Nawfal <em>Ulinnuha Faiz.</em></h1>
-          <p>Lulusan D3 Teknik Elektronika PENS yang senang merangkai solusi dari perangkat, perangkat lunak, dan cerita. Proyek akhir saya mengolah data Kertas C Plano; novel <em>Hujan dan Payung Biru</em> terbit pada 2025.</p>
-          <div className="button-row"><ButtonLink to="/proyek">Jelajahi Proyek <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/cv" variant="secondary">Lihat CV</ButtonLink></div>
+          <p>Saya membangun <em>Licia</em>, Personal Life OS yang menghubungkan AI, produktivitas, pengetahuan, dan refleksi. Saya juga lulusan D3 Teknik Elektronika PENS dengan proyek akhir tentang pengolahan data Kertas C Plano, serta penulis novel <em>Hujan dan Payung Biru</em>.</p>
+          <div className="button-row"><ButtonLink to={`/proyek/${liciaProject.slug}`}>Jelajahi Licia <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/cv" variant="secondary">Lihat CV</ButtonLink></div>
           <div className="hero-social"><span>Terhubung melalui</span><SocialIcons /></div>
         </div>
         <div className="hero-art">
           <img src="/images/portfolio-workspace.jpg" alt="Ilustrasi meja kerja dengan mikrokontroler, laptop, formulir, dan buku catatan" />
-          <span className="hero-art-label">Elektronika <i>×</i> Cerita</span>
+          <span className="hero-art-label">Software <i>×</i> Embedded</span>
         </div>
       </div>
     </section>
-    <section className="intro-strip"><div className="container intro-grid"><span>01 — Tentang</span><h2>Sebuah ruang untuk memperkenalkan diri melalui karya dan pemikiran.</h2><div><p>Website ini dirancang sebagai rumah digital yang merangkum perjalanan, eksplorasi, serta kanal komunikasi resmi dalam satu tempat.</p><ButtonLink to="/tentang" variant="text">Kenali Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
-    <section className="section"><div className="container"><SectionHeading eyebrow="Karya terpilih" title="Teknologi untuk data pemilu." description="Proyek akhir D3 yang menggabungkan perangkat embedded, pengolahan citra, dan AI vision." action={<ButtonLink to="/proyek" variant="secondary">Semua proyek <Icon name="arrow" size={17} /></ButtonLink>} /><div className="project-grid"><ProjectCard project={featuredProject} /></div></div></section>
+    <section className="intro-strip"><div className="container intro-grid"><span>01 — Tentang</span><h2>Sebuah ruang untuk memperkenalkan diri melalui karya dan pemikiran.</h2><div><p>Website ini merangkum perjalanan, eksplorasi, proyek yang saya bangun, serta kanal komunikasi resmi dalam satu tempat.</p><ButtonLink to="/tentang" variant="text">Kenali Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
+    <section className="section"><div className="container"><SectionHeading eyebrow="Proyek unggulan" title="Software yang menyatukan banyak bagian kehidupan." description="Licia adalah proyek utama yang sedang saya kembangkan: Personal Life OS dengan AI, sinkronisasi, dan alur kerja yang saling terhubung." action={<ButtonLink to={`/proyek/${liciaProject.slug}`} variant="secondary">Studi kasus <Icon name="arrow" size={17} /></ButtonLink>} /><LiciaProjectCard /></div></section>
+    <section className="section"><div className="container"><SectionHeading eyebrow="Proyek akademik" title="Teknologi untuk data pemilu." description="Proyek akhir D3 yang menggabungkan perangkat embedded, pengolahan citra, dan AI vision." action={<ButtonLink to="/proyek" variant="secondary">Semua proyek <Icon name="arrow" size={17} /></ButtonLink>} /><div className="project-grid"><ProjectCard project={featuredProject} /></div></div></section>
     <section className="section section-muted"><div className="container"><SectionHeading eyebrow="Jurnal" title="Tulisan & catatan." description="Catatan teknis, proses belajar, dan hal-hal yang saya temui saat membangun sebuah sistem." />{publishedPosts.length ? <div className="blog-grid">{publishedPosts.slice(0, 2).map((post) => <PostCard key={post.slug} post={post} />)}</div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/blog" variant="secondary">Lihat Blog <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
-    <section className="section"><div className="container novel-card"><div className="book-cover photo-cover"><img src="/images/hujan-dan-payung-biru-cover.jpg" alt="Sampul novel Hujan dan Payung Biru karya Nawfal Ulinnuha Faiz" /></div><div className="novel-copy"><Eyebrow>Karya sastra</Eyebrow><h2>Saya juga menulis cerita.</h2><p><em>Hujan dan Payung Biru</em> diterbitkan oleh Beranda pada 2025. Saya juga pernah menulis cerita untuk JanakaPens Komik.</p><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat detail buku <Icon name="external" size={17} /></a></div></div></section>
+    <section className="section"><div className="container novel-card"><div className="book-cover photo-cover"><img src="/images/hujan-dan-payung-biru-cover.jpg" alt="Sampul novel Hujan dan Payung Biru karya Nawfal Ulinnuha Faiz" loading="lazy" decoding="async" /></div><div className="novel-copy"><Eyebrow>Karya sastra</Eyebrow><h2>Saya juga menulis cerita.</h2><p><em>Hujan dan Payung Biru</em> diterbitkan oleh Beranda pada 2025. Saya juga pernah menulis cerita untuk JanakaPens Komik.</p><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat detail buku <Icon name="external" size={17} /></a></div></div></section>
     <ContactBand />
   </Shell>;
 }
+
 
 function ContactBand() {
   return <section className="contact-band"><div className="container contact-band-inner"><div><Eyebrow>Mari terhubung</Eyebrow><h2>Punya ide atau ingin <em>berkolaborasi?</em></h2></div><div><p>Saya terbuka untuk percakapan, pertukaran ide, dan peluang kolaborasi yang relevan.</p><div className="button-row"><ButtonLink to="/kontak">Mulai percakapan <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="https://wa.me/6281227504772" variant="secondary" external><Icon name="whatsapp" size={18} /> WhatsApp</ButtonLink></div></div></div></section>;
@@ -221,8 +288,43 @@ function Projects() {
       .catch(() => setUnavailable(true))
       .finally(() => setLoading(false));
   }, []);
-  return <Shell><PageHero eyebrow="Portfolio" title="Proyek & Eksplorasi" description="Proyek akhir kuliah serta repositori publik di GitHub." />
-    <section className="section no-top"><div className="container"><SectionHeading eyebrow="Proyek terpilih" title="Tabulasi Suara Kertas Plano Pemilu" description={featuredProject.summary} /><div className="project-grid"><ProjectCard project={featuredProject} /></div><div className="github-section"><div className="github-heading"><div><Eyebrow>GitHub</Eyebrow><h2>Repositori publik</h2></div><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">Lihat profil <Icon name="arrow" size={17} /></a></div>{loading ? <p className="muted-copy" aria-live="polite">Memuat profil dan repositori publik…</p> : profile && <div className="github-profile"><strong>{profile.name || siteConfig.githubUsername}</strong>{profile.bio && <p>{profile.bio}</p>}<span>{profile.public_repos} repositori publik · {profile.followers} pengikut</span></div>}{!loading && repos.length ? <div className="repo-grid">{repos.map((repo) => <article className="repo-card" key={repo.id}><div className="repo-top"><Icon name="code" /><span>{repo.language ?? "Repositori"}</span></div><h3><a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a></h3><p>{repo.description || "Repositori publik dari GitHub."}</p><div className="repo-meta"><span>★ {repo.stargazers_count}</span><span>Diperbarui {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(new Date(repo.updated_at))}</span></div></article>)}</div> : !loading && <div className="empty-note"><Icon name="github" /><div><strong>{unavailable ? "Repositori belum dapat dimuat." : "Belum ada repositori publik."}</strong><span>{unavailable ? "Silakan kunjungi profil GitHub untuk melihat repositori terbaru." : "Repositori akan tampil di sini bila tersedia."}</span></div></div>}</div></div></section>
+  return <Shell><PageHero eyebrow="Portfolio" title="Proyek & Eksplorasi" description="Produk perangkat lunak, proyek akademik, dan repositori publik." />
+    <section className="section no-top"><div className="container">
+      <SectionHeading eyebrow="Produk unggulan" title="Membangun sistem yang terasa menyatu." description="Licia menempati posisi utama karena menghubungkan AI dan beragam alur kerja pribadi dalam satu Personal Life OS." />
+      <LiciaProjectCard />
+      <div className="other-projects"><SectionHeading eyebrow="Proyek akademik" title="Tabulasi Suara Kertas Plano Pemilu" description={featuredProject.summary} /><div className="project-grid"><ProjectCard project={featuredProject} /></div></div>
+      <div className="github-section"><div className="github-heading"><div><Eyebrow>GitHub</Eyebrow><h2>Repositori publik</h2></div><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">Lihat profil <Icon name="arrow" size={17} /></a></div>{loading ? <p className="muted-copy" aria-live="polite">Memuat profil dan repositori publik…</p> : profile && <div className="github-profile"><strong>{profile.name || siteConfig.githubUsername}</strong>{profile.bio && <p>{profile.bio}</p>}<span>{profile.public_repos} repositori publik · {profile.followers} pengikut</span></div>}{!loading && repos.length ? <div className="repo-grid">{repos.map((repo) => <article className="repo-card" key={repo.id}><div className="repo-top"><Icon name="code" /><span>{repo.language ?? "Repositori"}</span></div><h3><a href={repo.html_url} target="_blank" rel="noopener noreferrer">{repo.name}</a></h3><p>{repo.description || "Repositori publik dari GitHub."}</p><div className="repo-meta"><span>★ {repo.stargazers_count}</span><span>Diperbarui {new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(new Date(repo.updated_at))}</span></div></article>)}</div> : !loading && <div className="empty-note"><Icon name="github" /><div><strong>{unavailable ? "Repositori belum dapat dimuat." : "Belum ada repositori publik."}</strong><span>{unavailable ? "Silakan kunjungi profil GitHub untuk melihat repositori terbaru." : "Repositori akan tampil di sini bila tersedia."}</span></div></div>}</div>
+    </div></section>
+  </Shell>;
+}
+
+
+function LiciaProjectDetail() {
+  return <Shell><section className="detail-hero licia-detail-hero"><div className="container">
+    <Breadcrumb items={[["Proyek", "/proyek"], ["Licia", ""]]} />
+    <span className="content-label">Produk unggulan · Personal Life OS · v0.58.0</span>
+    <h1>{liciaProject.title}</h1>
+    <p>{liciaProject.summary}</p>
+    <div className="tags">{liciaProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+    <div className="licia-detail-cover"><LiciaProjectVisual /></div>
+  </div></section>
+  <section className="section"><div className="container case-grid">
+    <aside><span>Ringkasan proyek</span>{[["Gambaran", "gambaran"], ["Modul terhubung", "modul"], ["AI & keandalan", "keandalan"], ["Teknologi", "teknologi"]].map(([label, id], index) => <a key={id} href={`#${id}`}>0{index + 1} {label}</a>)}</aside>
+    <div className="reading-column">
+      <section id="gambaran"><Eyebrow>Gambaran</Eyebrow><h2>Lebih dari sekadar daftar tugas.</h2><p>Licia 2.0 adalah Personal Life OS yang dirancang untuk menghubungkan produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi. Ide utamanya adalah membantu data dari satu area menjadi konteks bagi area lain, sehingga rencana dan keputusan tidak berdiri sendiri.</p><p>Arsitektur proyek memadukan aplikasi Next.js, data PostgreSQL melalui Supabase, serta AI yang dapat membaca konteks dan menjalankan operasi terkontrol terhadap data pengguna.</p></section>
+      <section id="modul"><Eyebrow>Modul yang terhubung</Eyebrow><h2>Satu sistem untuk alur kerja sehari-hari.</h2><div className="licia-detail-modules">
+        <div><strong>Task & Calendar</strong><p>Tugas, subtask, proyek, tujuan, milestone, jadwal, dan perencanaan mingguan.</p></div>
+        <div><strong>Knowledge & Habits</strong><p>Notes, Vault, Memory, reading, learning, habit tracker, dan refleksi.</p></div>
+        <div><strong>Finance & Health</strong><p>Pencatatan keuangan, budget, subscription, serta log kesehatan.</p></div>
+        <div><strong>Focus & Insights</strong><p>Sesi fokus, Pomodoro, timeline aktivitas, analytics, dan review.</p></div>
+        <div><strong>Reminders</strong><p>Reminder persisten, pengiriman notifikasi, retry, dan jejak status delivery.</p></div>
+        <div><strong>Offline & multi-device</strong><p>PWA, antrean capture saat offline, dan sinkronisasi kembali ketika koneksi tersedia.</p></div>
+      </div></section>
+      <section id="keandalan"><Eyebrow>AI & keandalan</Eyebrow><h2>Tindakan penting harus bisa diverifikasi.</h2><p>Licia mengarahkan operasi AI melalui alur memahami intent, memilih tool, memvalidasi argumen, menjalankan aksi, lalu memverifikasi hasil sebelum melaporkan keberhasilan. Operasi destruktif dan operasi massal memiliki guardrail, sementara histori tindakan menyediakan jejak audit untuk pemeriksaan.</p><p>Untuk privasi dan keamanan data, repo mendokumentasikan autentikasi, kontrol akses berbasis Row Level Security, Vault client-side, dan penguatan terhadap aksi berisiko. Fitur dan perlindungan ini tetap bergantung pada konfigurasi deployment serta kebijakan database yang benar.</p></section>
+      <section id="teknologi"><Eyebrow>Teknologi</Eyebrow><h2>Dibangun sebagai produk web full-stack.</h2><div className="tags">{liciaProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><p>Repositori memuat aplikasi, API, library AI dan notifikasi, migration Supabase, serta pengujian dan skrip quality gate. Informasi implementasi lebih lengkap tersedia pada README proyek.</p><div className="button-row"><a className="button button-primary" href={liciaProject.href} target="_blank" rel="noopener noreferrer">Lihat repository GitHub <Icon name="external" size={17} /></a><a className="button button-secondary" href={`${liciaProject.href}/blob/main/README.md`} target="_blank" rel="noopener noreferrer">Baca dokumentasi <Icon name="external" size={17} /></a></div></section>
+      <ButtonLink to="/proyek" variant="secondary">← Kembali ke daftar proyek</ButtonLink>
+    </div>
+  </div></section>
   </Shell>;
 }
 
@@ -315,10 +417,10 @@ function App() {
     return () => window.removeEventListener("popstate", update);
   }, []);
   useEffect(() => {
-    const page = path.startsWith("/blog/") ? "Blog" : path.startsWith("/proyek/") ? "Proyek" : ({ "/": "Beranda", "/tentang": "Tentang Saya", "/proyek": "Proyek", "/blog": "Blog", "/novel": "Karya & Novel", "/cv": "CV", "/kontak": "Kontak", "/sosial": "Social Hub", "/privasi": "Kebijakan Privasi" } as Record<string, string>)[path] ?? "Halaman tidak ditemukan";
+    const page = path === `/proyek/${liciaProject.slug}` ? liciaProject.title : path.startsWith("/blog/") ? "Blog" : path.startsWith("/proyek/") ? "Proyek" : ({ "/": "Beranda", "/tentang": "Tentang Saya", "/proyek": "Proyek", "/blog": "Blog", "/novel": "Karya & Novel", "/cv": "CV", "/kontak": "Kontak", "/sosial": "Social Hub", "/privasi": "Kebijakan Privasi" } as Record<string, string>)[path] ?? "Halaman tidak ditemukan";
     const article = path.startsWith("/blog/") ? getPost(path.split("/").filter(Boolean).at(-1) ?? "") : undefined;
     const title = `${article?.title ?? page} — ${siteConfig.name}`;
-    const descriptions: Record<string, string> = { "/": "Profil, proyek, CV, tulisan, dan kanal komunikasi Nawfal Ulinnuha Faiz.", "/tentang": "Profil dan perjalanan Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika PENS.", "/proyek": "Proyek akhir Teknik Elektronika dan repositori publik Nawfal Ulinnuha Faiz.", "/blog": "Tulisan dan catatan Nawfal Ulinnuha Faiz tentang teknologi, belajar, dan penulisan.", "/novel": "Pengalaman menulis cerita dan karya sastra Nawfal Ulinnuha Faiz.", "/cv": "Curriculum Vitae Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika.", "/kontak": "Hubungi Nawfal Ulinnuha Faiz melalui email, WhatsApp, atau formulir kontak.", "/sosial": "Kanal komunikasi Nawfal Ulinnuha Faiz.", "/privasi": "Kebijakan privasi situs Nawfal Ulinnuha Faiz." };
+    const descriptions: Record<string, string> = { "/": "Profil, proyek, CV, tulisan, dan kanal komunikasi Nawfal Ulinnuha Faiz.", "/tentang": "Profil dan perjalanan Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika PENS.", "/proyek": "Licia Personal Life OS, proyek akhir Teknik Elektronika, dan repositori GitHub Nawfal Ulinnuha Faiz.", [`/proyek/${liciaProject.slug}`]: liciaProject.summary, "/blog": "Tulisan dan catatan Nawfal Ulinnuha Faiz tentang teknologi, belajar, dan penulisan.", "/novel": "Pengalaman menulis cerita dan karya sastra Nawfal Ulinnuha Faiz.", "/cv": "Curriculum Vitae Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika.", "/kontak": "Hubungi Nawfal Ulinnuha Faiz melalui email, WhatsApp, atau formulir kontak.", "/sosial": "Kanal komunikasi Nawfal Ulinnuha Faiz.", "/privasi": "Kebijakan privasi situs Nawfal Ulinnuha Faiz." };
     const description = article?.description ?? descriptions[path] ?? `Informasi dari ${siteConfig.name}.`;
     const canonical = `${siteConfig.url}${path === "/" ? "/" : path}`;
     document.title = title;
@@ -331,6 +433,7 @@ function App() {
   if (path === "/") return <Home />;
   if (path === "/tentang") return <About />;
   if (path === "/proyek") return <Projects />;
+  if (path === `/proyek/${liciaProject.slug}`) return <LiciaProjectDetail />;
   if (path === `/proyek/${featuredProject.slug}`) return <ProjectDetail />;
   if (path.startsWith("/proyek/")) return <NotFound />;
   if (path === "/blog") return <Blog />;

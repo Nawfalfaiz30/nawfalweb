@@ -9,6 +9,7 @@ type ApiResponse = { setHeader(name: string, value: string): void; status(code: 
 const attempts = new Map<string, { count: number; expires: number }>();
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
+const MAX_TRACKED_CLIENTS = 5000;
 
 function clean(value: unknown, max: number) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -24,14 +25,23 @@ export default async function handler(request: ApiRequest, response: ApiResponse
   const body = request.body && typeof request.body === "object" ? request.body as Record<string, unknown> : {};
   if (clean(body.website, 200)) return response.status(200).json({ ok: true });
 
-  const ip = request.socket?.remoteAddress ?? "unknown";
+  const forwardedForHeader = request.headers["x-forwarded-for"];
+  const forwardedFor = Array.isArray(forwardedForHeader) ? forwardedForHeader[0] : forwardedForHeader;
+  // Proxies may append addresses to X-Forwarded-For; use the final entry to avoid trusting a client-supplied prefix.
+  const forwardedParts = clean(forwardedFor, 300).split(",").map((part) => part.trim()).filter(Boolean);
+  const forwardedIp = forwardedParts[forwardedParts.length - 1];
+  const ip = forwardedIp || request.socket?.remoteAddress || "unknown";
   const now = Date.now();
+  for (const [key, value] of attempts) if (value.expires <= now) attempts.delete(key);
   const prior = attempts.get(ip);
   if (prior && prior.expires > now && prior.count >= MAX_ATTEMPTS) {
     return response.status(429).json({ error: "Terlalu banyak percobaan. Coba lagi beberapa menit kemudian." });
   }
+  if (!attempts.has(ip) && attempts.size >= MAX_TRACKED_CLIENTS) {
+    const oldestIp = attempts.keys().next().value;
+    if (oldestIp) attempts.delete(oldestIp);
+  }
   attempts.set(ip, prior && prior.expires > now ? { count: prior.count + 1, expires: prior.expires } : { count: 1, expires: now + WINDOW_MS });
-  for (const [key, value] of attempts) if (value.expires <= now) attempts.delete(key);
 
   const name = clean(body.name, 100);
   const email = clean(body.email, 254);
