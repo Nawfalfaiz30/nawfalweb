@@ -53,4 +53,3 @@ Hubungkan repository ke Vercel dan tambahkan variabel environment di atas pada p
 ## Catatan konten
 
 CV dan foto profil yang diberikan disimpan di `public/cv/` dan `public/images/`. Halaman karya sastra hanya menampilkan pengalaman menulis yang tercantum di CV; judul novel, sinopsis, tautan penerbit, serta kanal sosial kosong tidak dikarang.
-

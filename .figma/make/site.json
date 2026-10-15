@@ -1,0 +1,18 @@
+{
+  "title": "Nawfal Ulinnuha Faiz — Elektronika, Embedded & Software",
+  "description": "Website pribadi Nawfal Ulinnuha Faiz: profil, proyek, CV, tulisan, dan kanal komunikasi.",
+  "language": "id",
+  "icons": {
+    "icon": "/favicon.svg"
+  },
+  "openGraph": {
+    "image": "https://nawfalulinnuhafaiz.my.id/images/nawfal-portrait.jpg"
+  },
+  "robots": {
+    "index": true
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
