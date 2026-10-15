@@ -1,4 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { featuredProject, siteConfig, socialLinks } from "./config/site";
 import { getPost, publishedPosts, renderMarkdown } from "./lib/content";
 
@@ -89,26 +90,28 @@ function Header() {
     document.querySelector<HTMLElement>(".mobile-menu button, .mobile-menu a")?.focus();
     return () => { document.body.style.overflow = priorOverflow; window.removeEventListener("keydown", closeOnEscape); };
   }, [open]);
-  return <header className="site-header">
-    <div className="container header-inner">
-      <Link to="/" className="wordmark" ><span className="wordmark-mark">N</span><span>Nawfal Ulinnuha Faiz</span></Link>
-      <nav className="desktop-nav" aria-label="Navigasi utama">
-        {navItems.map(([label, href]) => <Link key={href} to={href} className={path === href ? "active" : ""}>{label}</Link>)}
-      </nav>
-      <div className="header-actions">
-        <ButtonLink to="/kontak">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink>
-      <button className="menu-button" aria-label="Buka menu" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(true)}><Icon name="menu" /></button>
+  return <>
+    <header className="site-header">
+      <div className="container header-inner">
+        <Link to="/" className="wordmark" ><span className="wordmark-mark">N</span><span>Nawfal Ulinnuha Faiz</span></Link>
+        <nav className="desktop-nav" aria-label="Navigasi utama">
+          {navItems.map(([label, href]) => <Link key={href} to={href} className={path === href ? "active" : ""}>{label}</Link>)}
+        </nav>
+        <div className="header-actions">
+          <ButtonLink to="/kontak">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink>
+          <button className="menu-button" aria-label="Buka menu" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(true)}><Icon name="menu" /></button>
+        </div>
       </div>
-    </div>
-    {open && <div className="mobile-menu" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigasi utama">
+    </header>
+    {open && createPortal(<div className="mobile-menu" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigasi utama">
       <div className="mobile-menu-top">
         <span className="wordmark"><span className="wordmark-mark">N</span><span>Menu</span></span>
         <button className="icon-button" aria-label="Tutup menu" onClick={() => setOpen(false)}><Icon name="close" /></button>
       </div>
       <nav>{navItems.map(([label, href], index) => <Link key={href} to={href} onClick={() => setOpen(false)} className={path === href ? "active" : ""}><span>0{index + 1}</span>{label}<Icon name="arrow" /></Link>)}</nav>
       <ButtonLink to="/sosial" variant="secondary">Buka Social Hub</ButtonLink>
-    </div>}
-  </header>;
+    </div>, document.body)}
+  </>;
 }
 
 function Footer() {
