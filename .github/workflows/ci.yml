@@ -1,0 +1,38 @@
+name: Quality gates
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    name: Validate, test, prerender and audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm run typecheck
+      - name: Validate Markdown content
+        run: pnpm run validate:content
+      - name: Unit tests
+        run: pnpm test
+      - name: Build and prerender
+        run: pnpm run build
+      - name: Audit static routes
+        run: pnpm run audit:routes

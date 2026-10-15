@@ -4,6 +4,7 @@ export const siteConfig = {
   url: "https://nawfalulinnuhafaiz.my.id",
   email: "nawfalulinnuhafaiz82@gmail.com",
   githubUsername: "NawfalFaiz30",
+  featuredRepositoryNames: ["licia", "nawfalweb"],
   whatsappNumber: "6281227504772",
 };
 
@@ -20,6 +21,7 @@ export const liciaProject = {
   title: "Licia — Personal Life OS",
   summary: "Licia 2.0 adalah Personal Life OS yang menghubungkan AI, produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi dalam satu sistem pribadi dengan dukungan PWA, offline recovery, serta sinkronisasi multi-perangkat.",
   href: "https://github.com/Nawfalfaiz30/licia",
+  demo: "https://www.licia.site",
   tags: ["Next.js 16", "React 19", "TypeScript", "Supabase", "AI · Offline-first"],
 };
 

@@ -403,3 +403,19 @@ footer { background: var(--dark); color: var(--white); padding-top: 72px; }
   .licia-detail-cover .licia-preview { padding: 24px 20px; gap: 30px; }
   .licia-detail-cover .licia-preview-body h3 { font-size: 34px; }
 }
+
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff !important; color: #111 !important; font-size: 10pt; }
+  .site-header, footer, .skip-link, .contact-band, .cv-actions, .button, .button-row, .social-icons, .menu-button { display: none !important; }
+  .container { width: 100% !important; max-width: none !important; }
+  .page-hero { padding: 0 0 16px !important; }
+  .section { padding: 12px 0 !important; }
+  .cv-layout { display: block !important; }
+  .cv-layout > aside { margin-bottom: 14px; }
+  .cv-content section, .timeline-entry { break-inside: avoid; }
+  .cv-content section { margin-bottom: 14px; }
+  a { color: inherit !important; text-decoration: none !important; }
+  p { color: #222 !important; }
+}

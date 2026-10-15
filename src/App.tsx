@@ -1,7 +1,8 @@
-import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { featuredProject, liciaProject, siteConfig, socialLinks } from "./config/site";
 import { getPost, publishedPosts, renderMarkdown } from "./lib/content";
+import { getJsonLd, getPageMetadata, normalizePath } from "./lib/seo";
 
 type IconName =
   | "arrow"
@@ -29,6 +30,8 @@ const navItems = [
   ["CV", "/cv"],
   ["Kontak", "/kontak"],
 ];
+
+const RoutePathContext = createContext("/");
 
 function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const paths: Record<IconName, ReactNode> = {
@@ -64,14 +67,14 @@ function Link({
   external?: boolean;
   onClick?: () => void;
 }) {
+  const currentPath = useContext(RoutePathContext);
   if (external) return <a className={className} href={to} target="_blank" rel="noopener noreferrer">{children}</a>;
-  return <a className={className} href={to} onClick={(event) => {
+  return <a aria-current={to === currentPath ? "page" : undefined} className={className} href={to} onClick={(event) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     onClick?.();
     event.preventDefault();
     window.history.pushState({}, "", to);
     window.dispatchEvent(new PopStateEvent("popstate"));
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }}>{children}</a>;
 }
 
@@ -83,7 +86,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const path = window.location.pathname;
+  const path = useContext(RoutePathContext);
   useEffect(() => {
     if (!open) return;
     const priorOverflow = document.body.style.overflow;
@@ -197,7 +200,7 @@ function ProjectCard({ project }: { project: { title: string; summary: string; t
 
 function LiciaProjectVisual() {
   return <div className="licia-preview" role="img" aria-label="Ilustrasi tampilan pembuka Licia Personal Life OS">
-    <div className="licia-preview-header"><span className="licia-preview-brand"><b>L</b> LICIA PERSONAL LIFE OS</span><span className="licia-preview-version">v0.58.0</span></div>
+    <div className="licia-preview-header"><span className="licia-preview-brand"><b>L</b> LICIA PERSONAL LIFE OS</span><span className="licia-preview-version">Licia 2.0</span></div>
     <div className="licia-preview-body">
       <span className="licia-preview-kicker">YOUR LIFE, CONNECTED</span>
       <h3>Satu ruang untuk berpikir, merencanakan, dan menjalani hidup.</h3>
@@ -223,6 +226,7 @@ function LiciaProjectCard() {
       <div className="tags">{liciaProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
       <div className="button-row">
         <ButtonLink to={`/proyek/${liciaProject.slug}`}>Baca studi kasus <Icon name="arrow" size={17} /></ButtonLink>
+        <a className="button button-secondary" href={liciaProject.demo} target="_blank" rel="noopener noreferrer">Buka www.licia.site <Icon name="external" size={17} /></a>
         <a className="button button-secondary" href={liciaProject.href} target="_blank" rel="noopener noreferrer">Lihat repository <Icon name="external" size={17} /></a>
       </div>
     </div>
@@ -306,6 +310,7 @@ function LiciaProjectDetail() {
     <h1>{liciaProject.title}</h1>
     <p>{liciaProject.summary}</p>
     <div className="tags">{liciaProject.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+    <div className="button-row licia-detail-actions"><a className="button button-primary" href={liciaProject.demo} target="_blank" rel="noopener noreferrer">Buka www.licia.site <Icon name="external" size={17} /></a><a className="button button-secondary" href={liciaProject.href} target="_blank" rel="noopener noreferrer">Repository GitHub <Icon name="external" size={17} /></a></div>
     <div className="licia-detail-cover"><LiciaProjectVisual /></div>
   </div></section>
   <section className="section"><div className="container case-grid">
@@ -348,7 +353,8 @@ function Breadcrumb({ items }: { items: string[][] }) {
 
 function ArticleDetail() {
   const [copied, setCopied] = useState(false);
-  const slug = window.location.pathname.split("/").filter(Boolean).at(-1) ?? "";
+  const path = useContext(RoutePathContext);
+  const slug = path.split("/").filter(Boolean).at(-1) ?? "";
   const post = getPost(slug);
   if (!post) return <NotFound />;
   const blocks = renderMarkdown(post.body);
@@ -363,7 +369,8 @@ function Novel() {
 
 function CV() {
   return <Shell><PageHero eyebrow="Profil profesional" title="Curriculum Vitae" description="Lulusan D3 Teknik Elektronika dengan pengalaman embedded, pemeliharaan kelistrikan, quality control, dan penulisan cerita." side={<div className="cv-actions"><a className="button button-primary" href="/cv/nawfal-ulinnuha-faiz-cv.pdf" download><Icon name="download" size={18} /> Unduh CV PDF</a><ButtonLink to="/kontak" variant="secondary">Hubungi Saya</ButtonLink><small>Gunung Putri, Bogor · {siteConfig.email}</small></div>} />
-    <section className="section no-top"><div className="container cv-layout"><aside><div className="avatar large"><img src="/images/nawfal-portrait.jpg" alt="" /></div><h3>Nawfal Ulinnuha Faiz</h3><p>Lulusan D3 Teknik Elektronika yang tertarik pada pengembangan teknologi berbasis integrasi hardware dan software.</p><h4>Keterampilan teknis</h4><div className="tags">{["PLC Omron", "Arduino", "ESP32", "Troubleshooting elektronika", "Alat ukur listrik", "PHP", "Node.js", "Python", "C++", "JavaScript", "MySQL", "AutoCAD", "Eagle", "Microsoft Office"].map((skill) => <span key={skill}>{skill}</span>)}</div><h4>Kemampuan</h4><div className="tags">{["Berpikir kritis", "Penyelesaian masalah", "Kerja sama tim", "Komunikasi"].map((skill) => <span key={skill}>{skill}</span>)}</div><p><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">GitHub ↗</a></p></aside><div className="cv-content"><section><div className="cv-title"><span>01</span><h2>Pengalaman</h2></div><div className="timeline-entry"><div><strong>Operator Packing & Jiggering (Magang)</strong><span>PT. Haeng Nam Sejahtera Indonesia · Bogor</span><small>Januari 2026 – April 2026</small></div><p>Quality control produk, identifikasi produk cacat, pengemasan, finishing, dan pemeriksaan deformasi serta dimensi.</p></div><div className="timeline-entry"><div><strong>Teknisi Kelistrikan Kereta (Magang)</strong><span>PT Kereta Api Indonesia DAOP 8 · Surabaya</span><small>Juli 2024 – Desember 2024</small></div><p>Pemeliharaan sistem kelistrikan kereta, pengukuran parameter listrik, pemasangan komponen, dan dokumentasi sesuai prosedur K3.</p></div></section><section><div className="cv-title"><span>02</span><h2>Pendidikan</h2></div><div className="timeline-entry"><div><strong>Politeknik Elektronika Negeri Surabaya</strong><span>D3 Teknik Elektronika · IPK 3,55/4,00</span><small>Juli 2022 – Juli 2025</small></div><p>Proyek akhir: sistem tabulasi suara kertas plano menggunakan image processing pada ESP32 dan GPT-4o Vision API.</p></div></section><section><div className="cv-title"><span>03</span><h2>Kegiatan</h2></div><div className="timeline-entry"><div><strong>Penulis Cerita · JanakaPens Komik</strong><small>April 2024 – Juni 2025</small></div><p>Mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital. <a href="https://www.instagram.com/janaka.studio" target="_blank" rel="noopener noreferrer">Janaka Studio di Instagram ↗</a></p></div><div className="timeline-entry"><div><strong>Wakil Ketua Ekstrakurikuler Komputer · SMAN 1 Pangkah</strong><small>2020 – 2021</small></div><p>Mengelola kegiatan klub dan berkontribusi dalam pengembangan kemampuan anggota di bidang komputer.</p></div><div className="timeline-entry"><div><strong>Relawan · Gerakan Elka Mengajar</strong></div><p>Mengajar dasar elektronika kepada siswa sekolah dasar sebagai bagian dari pengabdian masyarakat.</p></div><div className="timeline-entry"><div><strong>Pembicara · Kegiatan Study Banding, SMA Hang Tuah 1 Surabaya</strong></div><p>Membawakan materi dan berbagi pengalaman tentang penulisan cerita.</p></div></section><section><div className="cv-title"><span>04</span><h2>Sertifikasi</h2></div><div className="timeline-entry"><div><strong>Sertifikat Kompetensi Pengoperasian Alat Ukur · BNSP</strong><small>November 2024 – November 2027</small></div></div><div className="timeline-entry"><div><strong>Pens English Proficiency Test · Skor 450</strong><small>Juni 2025 – Juni 2027</small></div></div></section></div></div></section>
+    <section className="section no-top"><div className="container cv-layout"><aside><div className="avatar large"><img src="/images/nawfal-portrait.jpg" alt="" /></div><h3>Nawfal Ulinnuha Faiz</h3><p>Lulusan D3 Teknik Elektronika yang tertarik pada pengembangan teknologi berbasis integrasi hardware dan software.</p><h4>Keterampilan teknis</h4><div className="tags">{["PLC Omron", "Arduino", "ESP32", "Troubleshooting elektronika", "Alat ukur listrik", "PHP", "Node.js", "Python", "C++", "JavaScript", "MySQL", "AutoCAD", "Eagle", "Microsoft Office"].map((skill) => <span key={skill}>{skill}</span>)}</div><h4>Kemampuan</h4><div className="tags">{["Berpikir kritis", "Penyelesaian masalah", "Kerja sama tim", "Komunikasi"].map((skill) => <span key={skill}>{skill}</span>)}</div><p><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">GitHub ↗</a></p></aside><div className="cv-content"><section><div className="cv-title"><span>01</span><h2>Pengalaman</h2></div><div className="timeline-entry"><div><strong>Operator Packing & Jiggering (Magang)</strong><span>PT. Haeng Nam Sejahtera Indonesia · Bogor</span><small>Januari 2026 – April 2026</small></div><p>Quality control produk, identifikasi produk cacat, pengemasan, finishing, dan pemeriksaan deformasi serta dimensi.</p></div><div className="timeline-entry"><div><strong>Teknisi Kelistrikan Kereta (Magang)</strong><span>PT Kereta Api Indonesia DAOP 8 · Surabaya</span><small>Juli 2024 – Desember 2024</small></div><p>Pemeliharaan sistem kelistrikan kereta, pengukuran parameter listrik, pemasangan komponen, dan dokumentasi sesuai prosedur K3.</p></div></section><section><div className="cv-title"><span>02</span><h2>Pendidikan</h2></div><div className="timeline-entry"><div><strong>Politeknik Elektronika Negeri Surabaya</strong><span>D3 Teknik Elektronika · IPK 3,55/4,00</span><small>Juli 2022 – Juli 2025</small></div><p>Proyek akhir: sistem tabulasi suara kertas plano menggunakan image processing pada ESP32 dan GPT-4o Vision API.</p></div></section><section><div className="cv-title"><span>04</span><h2>Kegiatan</h2></div><div className="timeline-entry"><div><strong>Penulis Cerita · JanakaPens Komik</strong><small>April 2024 – Juni 2025</small></div><p>Mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital. <a href="https://www.instagram.com/janaka.studio" target="_blank" rel="noopener noreferrer">Janaka Studio di Instagram ↗</a></p></div><div className="timeline-entry"><div><strong>Wakil Ketua Ekstrakurikuler Komputer · SMAN 1 Pangkah</strong><small>2020 – 2021</small></div><p>Mengelola kegiatan klub dan berkontribusi dalam pengembangan kemampuan anggota di bidang komputer.</p></div><div className="timeline-entry"><div><strong>Relawan · Gerakan Elka Mengajar</strong></div><p>Mengajar dasar elektronika kepada siswa sekolah dasar sebagai bagian dari pengabdian masyarakat.</p></div><div className="timeline-entry"><div><strong>Pembicara · Kegiatan Study Banding, SMA Hang Tuah 1 Surabaya</strong></div><p>Membawakan materi dan berbagi pengalaman tentang penulisan cerita.</p></div></section><section><div className="cv-title"><span>03</span><h2>Proyek terpilih</h2></div><div className="timeline-entry"><div><strong>Licia — Personal Life OS</strong><span>Produk perangkat lunak · Pengembangan berkelanjutan</span></div><p>Sistem pribadi yang menghubungkan AI, produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi. <a href={liciaProject.demo} target="_blank" rel="noopener noreferrer">www.licia.site ↗</a> · <a href={liciaProject.href} target="_blank" rel="noopener noreferrer">Repository ↗</a></p></div><div className="timeline-entry"><div><strong>Tabulasi Suara Kertas Plano Pemilu</strong><span>Proyek akhir D3 Teknik Elektronika · PENS</span></div><p>Sistem yang menghubungkan perangkat counting berbasis ESP32 dengan pembacaan citra dan validasi data.</p></div></section>
+    <section><div className="cv-title"><span>05</span><h2>Sertifikasi</h2></div><div className="timeline-entry"><div><strong>Sertifikat Kompetensi Pengoperasian Alat Ukur · BNSP</strong><small>November 2024 – November 2027</small></div></div><div className="timeline-entry"><div><strong>Pens English Proficiency Test · Skor 450</strong><small>Juni 2025 – Juni 2027</small></div></div></section></div></div></section>
   </Shell>;
 }
 
@@ -409,41 +416,93 @@ function NotFound() {
   return <Shell><section className="not-found"><div className="container"><span className="giant-404">404</span><Eyebrow>Halaman tidak ditemukan</Eyebrow><h1>Sepertinya Anda mengambil jalan yang berbeda.</h1><p>Halaman yang dicari mungkin telah dipindahkan atau tidak tersedia.</p><div className="button-row"><ButtonLink to="/">Kembali ke Beranda <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/blog" variant="secondary">Baca Blog</ButtonLink><ButtonLink to="/proyek" variant="text">Lihat Proyek</ButtonLink></div></div></section></Shell>;
 }
 
-function App() {
-  const [path, setPath] = useState(window.location.pathname);
+function App({ initialPath }: { initialPath?: string } = {}) {
+  const [path, setPath] = useState(() => normalizePath(
+    initialPath ?? (typeof window !== "undefined" ? window.location.pathname : "/"),
+  ));
+  const previousPath = useRef(path);
   useEffect(() => {
-    const update = () => setPath(window.location.pathname);
+    const update = () => setPath(normalizePath(window.location.pathname));
     window.addEventListener("popstate", update);
     return () => window.removeEventListener("popstate", update);
   }, []);
   useEffect(() => {
-    const page = path === `/proyek/${liciaProject.slug}` ? liciaProject.title : path.startsWith("/blog/") ? "Blog" : path.startsWith("/proyek/") ? "Proyek" : ({ "/": "Beranda", "/tentang": "Tentang Saya", "/proyek": "Proyek", "/blog": "Blog", "/novel": "Karya & Novel", "/cv": "CV", "/kontak": "Kontak", "/sosial": "Social Hub", "/privasi": "Kebijakan Privasi" } as Record<string, string>)[path] ?? "Halaman tidak ditemukan";
     const article = path.startsWith("/blog/") ? getPost(path.split("/").filter(Boolean).at(-1) ?? "") : undefined;
-    const title = `${article?.title ?? page} — ${siteConfig.name}`;
-    const descriptions: Record<string, string> = { "/": "Profil, proyek, CV, tulisan, dan kanal komunikasi Nawfal Ulinnuha Faiz.", "/tentang": "Profil dan perjalanan Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika PENS.", "/proyek": "Licia Personal Life OS, proyek akhir Teknik Elektronika, dan repositori GitHub Nawfal Ulinnuha Faiz.", [`/proyek/${liciaProject.slug}`]: liciaProject.summary, "/blog": "Tulisan dan catatan Nawfal Ulinnuha Faiz tentang teknologi, belajar, dan penulisan.", "/novel": "Pengalaman menulis cerita dan karya sastra Nawfal Ulinnuha Faiz.", "/cv": "Curriculum Vitae Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika.", "/kontak": "Hubungi Nawfal Ulinnuha Faiz melalui email, WhatsApp, atau formulir kontak.", "/sosial": "Kanal komunikasi Nawfal Ulinnuha Faiz.", "/privasi": "Kebijakan privasi situs Nawfal Ulinnuha Faiz." };
-    const description = article?.description ?? descriptions[path] ?? `Informasi dari ${siteConfig.name}.`;
-    const canonical = `${siteConfig.url}${path === "/" ? "/" : path}`;
-    document.title = title;
-    document.querySelector('meta[name="description"]')?.setAttribute("content", description);
-    document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
-    document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
-    document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonical);
-    document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonical);
+    const metadata = getPageMetadata(path, article);
+    document.title = metadata.title;
+    const setMeta = (attribute: "name" | "property", key: string, value: string) => {
+      const selector = "meta[" + attribute + "=\"" + key + "\"]";
+      const nodes = Array.from(document.querySelectorAll<HTMLMetaElement>(selector));
+      if (nodes.length) nodes.forEach((node) => node.setAttribute("content", value));
+      else {
+        const node = document.createElement("meta");
+        node.setAttribute(attribute, key);
+        node.setAttribute("content", value);
+        document.head.append(node);
+      }
+    };
+    setMeta("name", "description", metadata.description);
+    setMeta("property", "og:type", metadata.ogType);
+    setMeta("property", "og:title", metadata.title);
+    setMeta("property", "og:description", metadata.description);
+    setMeta("property", "og:url", metadata.canonical);
+    setMeta("property", "og:image", metadata.image);
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", metadata.title);
+    setMeta("name", "twitter:description", metadata.description);
+    setMeta("name", "twitter:image", metadata.image);
+    setMeta("name", "robots", metadata.robots);
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = metadata.canonical;
+    else {
+      const node = document.createElement("link");
+      node.rel = "canonical";
+      node.href = metadata.canonical;
+      document.head.append(node);
+    }
+    const schema = JSON.stringify(getJsonLd(path, metadata, article)).replace(/</g, "\\u003c");
+    const jsonLd = document.querySelector<HTMLScriptElement>('script[type="application/ld+json"]');
+    if (jsonLd) jsonLd.textContent = schema;
+    else {
+      const node = document.createElement("script");
+      node.type = "application/ld+json";
+      node.textContent = schema;
+      document.head.append(node);
+    }
+    if (previousPath.current !== path) {
+      const main = document.getElementById("main-content");
+      if (main) {
+        main.setAttribute("tabindex", "-1");
+        main.focus({ preventScroll: true });
+      }
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+      previousPath.current = path;
+    }
   }, [path]);
-  if (path === "/") return <Home />;
-  if (path === "/tentang") return <About />;
-  if (path === "/proyek") return <Projects />;
-  if (path === `/proyek/${liciaProject.slug}`) return <LiciaProjectDetail />;
-  if (path === `/proyek/${featuredProject.slug}`) return <ProjectDetail />;
-  if (path.startsWith("/proyek/")) return <NotFound />;
-  if (path === "/blog") return <Blog />;
-  if (path.startsWith("/blog/")) return <ArticleDetail />;
-  if (path === "/novel") return <Novel />;
-  if (path === "/cv") return <CV />;
-  if (path === "/kontak") return <Contact />;
-  if (path === "/sosial") return <SocialHub />;
-  if (path === "/privasi") return <Privacy />;
-  return <NotFound />;
+
+  let page: ReactNode;
+  if (path === "/") page = <Home />;
+  else if (path === "/tentang") page = <About />;
+  else if (path === "/proyek") page = <Projects />;
+  else if (path === "/proyek/" + liciaProject.slug) page = <LiciaProjectDetail />;
+  else if (path === "/proyek/" + featuredProject.slug) page = <ProjectDetail />;
+  else if (path.startsWith("/proyek/")) page = <NotFound />;
+  else if (path === "/blog") page = <Blog />;
+  else if (path.startsWith("/blog/")) page = <ArticleDetail />;
+  else if (path === "/novel") page = <Novel />;
+  else if (path === "/cv") page = <CV />;
+  else if (path === "/kontak") page = <Contact />;
+  else if (path === "/sosial") page = <SocialHub />;
+  else if (path === "/privasi") page = <Privacy />;
+  else page = <NotFound />;
+
+  const article = path.startsWith("/blog/") ? getPost(path.split("/").filter(Boolean).at(-1) ?? "") : undefined;
+  const pageTitle = getPageMetadata(path, article).title;
+  return <RoutePathContext.Provider value={path}>
+    <div className="sr-only" aria-live="polite" aria-atomic="true">{pageTitle}</div>
+    {page}
+  </RoutePathContext.Provider>;
 }
 
 export default App;

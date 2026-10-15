@@ -1,65 +1,59 @@
 # nawfalweb
 
-Website pribadi dan Social Hub Nawfal Ulinnuha Faiz. Aplikasi portofolio menggunakan React, TypeScript, dan Vite; konten disimpan di repository dan formulir kontak diteruskan melalui API Vercel. Tidak ada database aplikasi untuk portofolio ini. Proyek produk unggulan, Licia, dikembangkan terpisah di repository tersendiri.
+Website pribadi dan Social Hub Nawfal Ulinnuha Faiz. Aplikasi portofolio menggunakan React, TypeScript, dan Vite. Konten disimpan di repository; tidak ada database aplikasi untuk situs portofolio ini. Licia adalah produk terpisah.
 
 ## Proyek unggulan
 
 ### Licia — Personal Life OS
 
-Licia 2.0 adalah produk web full-stack untuk menghubungkan AI, produktivitas, catatan, kalender, fokus, kebiasaan, kesehatan, keuangan, dan refleksi dalam satu sistem pribadi. Repo utamanya menggunakan Next.js, React, TypeScript, dan Supabase, dengan dukungan PWA/offline recovery, sinkronisasi multi-perangkat, reminder persisten, serta guardrail untuk tindakan AI.
+Licia 2.0 adalah produk web untuk menghubungkan AI, produktivitas, catatan, kalender, fokus, kebiasaan, kesehatan, keuangan, dan refleksi dalam satu sistem pribadi.
 
-- Repository: [Nawfalfaiz30/licia](https://github.com/Nawfalfaiz30/licia)
-- Studi kasus di situs portofolio: `/proyek/licia-personal-life-os`
-- Proyek akhir D3 berupa sistem tabulasi suara Kertas C Plano tetap ditampilkan sebagai proyek akademik unggulan kedua.
+- Situs produk: https://www.licia.site
+- Repository: https://github.com/Nawfalfaiz30/licia
+- Studi kasus di situs portofolio: /proyek/licia-personal-life-os
+
+Proyek akhir D3 berupa sistem tabulasi suara Kertas C Plano tetap ditampilkan sebagai proyek akademik unggulan.
 
 ## Menjalankan lokal
 
-1. Gunakan Node.js 20.19+ atau 22.12+.
-2. Jalankan `pnpm install`.
-3. Jalankan `pnpm dev` untuk melihat antarmuka.
-4. Untuk menjalankan API Vercel secara lokal, gunakan Vercel CLI dengan `vercel dev`; endpoint `/api/github` dan `/api/contact` tidak dilayani oleh Vite saja.
+Gunakan Node.js 22 dan pnpm 10.
 
-`pnpm build` membuat situs statis di `dist/`.
+    pnpm install --frozen-lockfile
+    pnpm dev
+
+Untuk menguji endpoint serverless secara lokal, jalankan Vercel CLI dengan perintah vercel dev. Vite saja tidak melayani endpoint /api/*.
+
+## Perintah kualitas
+
+- pnpm typecheck — pemeriksaan TypeScript.
+- pnpm validate:content — validasi frontmatter dan slug artikel.
+- pnpm test — pengujian unit helper SEO menggunakan Node.js test runner.
+- pnpm build — build Vite, prerender HTML per rute, serta pembuatan sitemap dan RSS.
+- pnpm audit:routes — pemeriksaan metadata, HTML prerender, RSS, dan halaman 404 setelah build.
+
+GitHub Actions menjalankan gerbang tersebut saat push ke main atau pull request menuju main. Deploy statis tidak membutuhkan database.
 
 ## Konten
 
-- Tautan sosial dan profil situs: `src/config/site.ts`.
-- Proyek akhir yang faktanya bersumber dari CV: `src/config/site.ts`.
-- Artikel blog: tambahkan file Markdown ke `src/content/blog/`.
+- Informasi sosial dan produk: src/config/site.ts.
+- Metadata halaman: src/lib/seo.ts.
+- Artikel blog: tambahkan Markdown ke src/content/blog/.
 
-Format frontmatter artikel:
+Frontmatter wajib berisi title, description, date (YYYY-MM-DD), slug, tags, dan draft. Slug harus unik; draft: true tidak diterbitkan. HTML halaman artikel dirender saat build, sehingga crawler menerima isi artikel dan metadata tanpa menunggu JavaScript.
 
-```md
----
-title: "Judul"
-description: "Ringkasan singkat untuk arsip dan pratinjau."
-date: "2026-10-15"
-slug: "judul"
-tags: ["catatan"]
-draft: true
----
+Build menghasilkan dist/sitemap.xml, dist/rss.xml, dan dist/404.html. Sitemap output dibuat ulang dari rute dan artikel yang diterbitkan.
 
-Isi artikel dalam Markdown.
-```
+## Deploy produksi
 
-Slug harus unik. Artikel `draft: true` tidak muncul pada arsip publik. Renderer mendukung paragraf, heading, daftar, dan blok kode.
+Vercel adalah satu-satunya jalur deployment produksi:
+1. Hubungkan repository ke proyek Vercel dengan root direktori repository.
+2. Build command: pnpm run build; output directory: dist.
+3. Uji preview deployment dan formulir kontak sebelum mengalihkan domain produksi.
 
-## API dan environment
+Tidak ada rewrite global ke /. Berkas statis per rute dan dist/404.html menangani navigasi langsung dan halaman tidak ditemukan. Verifikasi domain dan sertifikat TLS di dashboard sebelum mempromosikan rilis.
 
-GitHub API membaca repo publik `NawfalFaiz30`; tidak membutuhkan token. Respons di-cache melalui header CDN selama lima menit dengan stale-while-revalidate.
+## Keamanan, aksesibilitas, dan privasi
 
-Form kontak memakai Resend. Salin `.env.example` ke `.env.local` untuk pengembangan dengan Vercel CLI, lalu isi:
+Situs mempertahankan pendekatan tanpa database dan tanpa cookie pelacakan. Header keamanan ditetapkan di vercel.json; bila menambahkan sumber script, font, gambar, atau API eksternal, perbarui CSP secara terukur dan uji seluruh rute. Perbarui Kebijakan Privasi sebelum menambah layanan yang memproses data baru.
 
-- `CONTACT_TO_EMAIL`: alamat penerima pesan.
-- `CONTACT_FROM_EMAIL`: alamat pengirim yang sudah diverifikasi pada Resend.
-- `RESEND_API_KEY`: API key Resend, hanya di environment server.
-
-Jangan commit `.env.local`. Honeypot, validasi server, batas panjang, persetujuan, dan rate limit in-memory lima pesan per sepuluh menit tersedia. Rate limit in-memory adalah perlindungan dasar dan dapat direset ketika fungsi serverless berpindah instance.
-
-## Deploy
-
-Hubungkan repository ke Vercel dan tambahkan variabel environment di atas pada project settings. Atur domain `nawfalulinnuhafaiz.my.id` setelah kepemilikan, DNS, dan HTTPS diverifikasi. Domain pada metadata dan sitemap saat ini adalah target PRD, bukan bukti bahwa domain sudah aktif.
-
-## Catatan konten
-
-CV dan foto profil yang diberikan disimpan di `public/cv/` dan `public/images/`. Halaman karya sastra hanya menampilkan pengalaman menulis yang tercantum di CV; judul novel, sinopsis, tautan penerbit, serta kanal sosial kosong tidak dikarang.
+CV web memiliki stylesheet cetak. Berkas PDF di public/cv/ merupakan aset terpisah dan harus diganti dengan PDF terbaru ketika isi CV resmi diperbarui; perubahan halaman web saja tidak memperbarui berkas PDF biner.

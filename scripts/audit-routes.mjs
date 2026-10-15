@@ -1,0 +1,32 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+const outDir = path.resolve("dist");
+const sitemap = await readFile(path.join(outDir, "sitemap.xml"), "utf8");
+const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
+assert.ok(urls.length >= 11, "Sitemap berisi terlalu sedikit rute");
+const titles = new Set();
+const canonicals = new Set();
+for (const href of urls) {
+  const pathname = new URL(href).pathname;
+  const file = pathname === "/" ? path.join(outDir, "index.html") : path.join(outDir, pathname.slice(1), "index.html");
+  const html = await readFile(file, "utf8");
+  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1];
+  const description = html.match(/<meta name="description" content="([^"]*)"/i)?.[1];
+  const canonical = html.match(/<link rel="canonical" href="([^"]*)"/i)?.[1];
+  const ogUrl = html.match(/<meta property="og:url" content="([^"]*)"/i)?.[1];
+  assert.ok(title, pathname + ": title tidak ada");
+  assert.ok(description, pathname + ": description tidak ada");
+  assert.equal(canonical, href, pathname + ": canonical tidak sesuai sitemap");
+  assert.equal(ogUrl, href, pathname + ": og:url tidak sesuai sitemap");
+  assert.ok(html.includes('id="root"><'), pathname + ": konten tidak diprerender");
+  assert.ok(!titles.has(title), pathname + ": title duplikat");
+  assert.ok(!canonicals.has(canonical), pathname + ": canonical duplikat");
+  titles.add(title);
+  canonicals.add(canonical);
+}
+assert.ok((await readFile(path.join(outDir, "rss.xml"), "utf8")).includes("<rss"), "RSS tidak dihasilkan");
+const notFound = await readFile(path.join(outDir, "404.html"), "utf8");
+assert.ok(notFound.includes("Halaman tidak ditemukan"), "404 tidak benar");
+assert.match(notFound, /name="robots" content="noindex, nofollow"/);
+console.log("Audit berhasil: " + urls.length + " rute, RSS, dan 404.");

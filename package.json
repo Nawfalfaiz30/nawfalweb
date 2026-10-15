@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "validate:content": "node scripts/validate-content.mjs",
+    "test": "node --test",
+    "audit:routes": "node scripts/audit-routes.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
