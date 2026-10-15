@@ -13,7 +13,8 @@ test("title and canonical values are escaped", () => {
 });
 test("JSON-LD escapes angle brackets", () => {
   const out = replaceJsonLd("<head></head>", { name: "</script><script>alert(1)</script>" });
-  assert.match(out, /\\u003c\/script\\u003e/);
+  assert.match(out, /\\u003c\/script>/);
+  assert.doesNotMatch(out, /<\/script><script>alert/);
 });
 test("page metadata includes OG, Twitter and robots", () => {
   const out = applyPageMetadata("<head><title>Old</title></head>", {
