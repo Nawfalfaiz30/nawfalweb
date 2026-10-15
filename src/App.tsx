@@ -273,11 +273,105 @@ function ContactBand() {
 }
 
 function About() {
-  return <Shell><PageHero eyebrow="Profil" title="Tentang Saya" description="Saya Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika dari Politeknik Elektronika Negeri Surabaya. Saya tertarik pada pekerjaan yang mempertemukan perangkat, perangkat lunak, dan kebutuhan nyata." side={<div className="page-number">01 <span>/ 06</span></div>} />
-    <section className="section"><div className="container editorial-grid"><div className="portrait-frame"><img src="/images/nawfal-portrait.jpg" alt="Nawfal Ulinnuha Faiz mengenakan jas dan dasi" /><span>Gunung Putri, Bogor</span></div><div className="prose-intro"><Eyebrow>Perkenalan</Eyebrow><h2>Membangun, belajar, dan bercerita.</h2><p>Saya menempuh pendidikan D3 Teknik Elektronika di PENS pada 2022–2025. Di sana saya banyak belajar menghubungkan dasar elektronika, sistem terbenam, pemrograman, dan pengujian. Saya menikmati proses mencari tahu mengapa sebuah sistem bekerja—atau gagal—lalu memperbaikinya dengan langkah yang terukur.</p><p>Proyek akhir saya menggabungkan tombol penghitung pemilih berbasis ESP32 dengan pembacaan angka dari Kertas C Plano menggunakan Tesseract OCR dan GPT-4o Vision API. Hasilnya mempertemukan pekerjaan hardware, aplikasi web, pengolahan citra, dan validasi data dalam satu alur.</p><p>Pengalaman magang memperkenalkan saya pada disiplin kerja dan keselamatan: dari pemeriksaan mutu produk di lingkungan manufaktur hingga pemeliharaan serta pengukuran sistem kelistrikan kereta. Saya juga pernah menjadi wakil ketua ekstrakurikuler komputer, mengajar dasar elektronika sebagai relawan, dan berbagi pengalaman menulis sebagai pembicara.</p><p>Di sisi kreatif, saya menulis cerita untuk JanakaPens Komik dan menerbitkan novel <em>Hujan dan Payung Biru</em> bersama Penerbit Beranda pada 2025. Bagi saya, teknik dan menulis sama-sama membutuhkan rasa ingin tahu, ketelitian, dan kemampuan memahami orang yang akan membaca atau menggunakan hasilnya.</p><div className="interest-grid">{[["01", "Elektronika", "ESP32, Arduino, PLC Omron, pengukuran, dan troubleshooting."], ["02", "Software", "Python, JavaScript, Node.js, PHP, C++, dan MySQL."], ["03", "Kreatif", "Penulisan cerita, kolaborasi komik, dan komunikasi."], ["04", "Cara kerja", "Belajar cepat, memecahkan masalah, dokumentasi, dan kerja tim."]].map(([number, title, description]) => <div key={title}><span>{number}</span><h3>{title}</h3><p>{description}</p></div>)}</div><div className="button-row"><ButtonLink to="/proyek">Lihat Proyek <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/cv" variant="secondary">Lihat CV</ButtonLink></div></div></div></section>
+  return <Shell>
+    <PageHero eyebrow="Profil" title="Tentang Saya" description="Saya Nawfal Ulinnuha Faiz, lulusan D3 Teknik Elektronika dari Politeknik Elektronika Negeri Surabaya. Saya tertarik pada pekerjaan yang mempertemukan perangkat, perangkat lunak, dan kebutuhan nyata." side={<div className="page-number">01 <span>/ 06</span></div>} />
+
+    <section className="section about-chapter about-intro" id="tentang-perkenalan">
+      <div className="container editorial-grid">
+        <div className="portrait-frame">
+          <img src="/images/nawfal-portrait.jpg" alt="Nawfal Ulinnuha Faiz mengenakan jas dan dasi" />
+          <span>Gunung Putri, Bogor</span>
+        </div>
+        <div className="prose-intro">
+          <Eyebrow>01 · Perkenalan</Eyebrow>
+          <h2>Membangun, belajar, dan bercerita.</h2>
+          <p>Saya menikmati proses mencari tahu mengapa sebuah sistem bekerja—atau gagal—lalu memperbaikinya dengan langkah yang terukur. Latar belakang elektronika membuat saya terbiasa melihat hubungan antara perangkat, perangkat lunak, pengujian, dan kebutuhan orang yang menggunakannya.</p>
+          <p>Di luar pekerjaan teknis, saya juga menulis cerita dan berkolaborasi dalam karya kreatif. Saya ingin terus mengembangkan kemampuan teknis tanpa kehilangan rasa ingin tahu dan perhatian terhadap pengalaman manusia.</p>
+          <div className="interest-grid">
+            {[["01", "Elektronika", "ESP32, Arduino, PLC Omron, pengukuran, dan troubleshooting."], ["02", "Software", "Python, JavaScript, Node.js, PHP, C++, dan MySQL."], ["03", "Kreatif", "Penulisan cerita, kolaborasi komik, dan komunikasi."], ["04", "Cara kerja", "Belajar cepat, pemecahan masalah, dokumentasi, dan kerja tim."]].map(([number, title, description]) => <div key={title}><span>{number}</span><h3>{title}</h3><p>{description}</p></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="section about-chapter" id="tentang-elektronika">
+      <div className="container about-chapter-grid">
+        <div className="about-chapter-title">
+          <Eyebrow>02 · Bidang teknis</Eyebrow>
+          <h2>Elektronika dan sistem terbenam.</h2>
+        </div>
+        <div className="about-chapter-body">
+          <p>Proyek akhir saya menggabungkan perangkat penghitung pemilih berbasis ESP32 dengan pencatatan jumlah melalui tombol tambah dan koreksi. Informasi jumlah ditampilkan pada LCD 16×2, dilengkapi buzzer, lalu dikirim melalui Wi-Fi dalam format JSON.</p>
+          <div className="about-facts">
+            <article><span>Perangkat</span><strong>ESP32 · LCD 16×2</strong><p>Penghitungan, koreksi, dan umpan balik perangkat.</p></article>
+            <article><span>Komunikasi</span><strong>Wi-Fi · JSON</strong><p>Data perangkat diteruskan agar bisa diproses aplikasi.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="section about-chapter" id="tentang-software">
+      <div className="container about-chapter-grid">
+        <div className="about-chapter-title">
+          <Eyebrow>03 · Integrasi</Eyebrow>
+          <h2>Software yang menghubungkan data.</h2>
+        </div>
+        <div className="about-chapter-body">
+          <p>Bagian perangkat lunak proyek akhir menyediakan alur untuk mengunggah foto Kertas C Plano, membaca angka dari citra, lalu membandingkannya dengan jumlah dari perangkat counting.</p>
+          <p>Proyek ini menguji Tesseract OCR dan GPT-4o Vision API untuk ekstraksi angka. Ketika selisih melewati toleransi yang ditentukan, data perlu ditinjau kembali—hasil pembacaan mesin tidak langsung dianggap benar.</p>
+          <div className="about-facts">
+            <article><span>Pembacaan citra</span><strong>Tesseract OCR · GPT-4o Vision API</strong><p>Dua pendekatan untuk membaca angka pada formulir.</p></article>
+            <article><span>Validasi</span><strong>Perbandingan dan pemeriksaan</strong><p>Hasil ekstraksi dibandingkan dengan sumber data counting.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="section about-chapter" id="tentang-pengalaman">
+      <div className="container about-chapter-grid">
+        <div className="about-chapter-title">
+          <Eyebrow>04 · Pengalaman</Eyebrow>
+          <h2>Belajar dari pekerjaan nyata.</h2>
+        </div>
+        <div className="about-chapter-body about-role-list">
+          <article><span>Januari 2026 – April 2026</span><h3>Operator Packing &amp; Jiggering (Magang)</h3><p>PT. Haeng Nam Sejahtera Indonesia · Bogor</p><p>Quality control produk, identifikasi produk cacat, pengemasan, finishing, dan pemeriksaan deformasi serta dimensi.</p></article>
+          <article><span>Juli 2024 – Desember 2024</span><h3>Teknisi Kelistrikan Kereta (Magang)</h3><p>PT Kereta Api Indonesia DAOP 8 · Surabaya</p><p>Pemeliharaan dan pengukuran sistem kelistrikan kereta, pemasangan komponen, serta dokumentasi sesuai prosedur K3.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section className="section about-chapter" id="tentang-pendidikan">
+      <div className="container about-chapter-grid">
+        <div className="about-chapter-title">
+          <Eyebrow>05 · Pendidikan</Eyebrow>
+          <h2>Dasar yang terus dikembangkan.</h2>
+        </div>
+        <div className="about-chapter-body">
+          <h3>Politeknik Elektronika Negeri Surabaya</h3>
+          <p>D3 Teknik Elektronika · Juli 2022 – Juli 2025 · IPK 3,55/4,00.</p>
+          <p>Selama kuliah, saya mempelajari dasar elektronika dan sistem terbenam serta mengerjakan proyek akhir yang mempertemukan perangkat fisik, aplikasi web, pembacaan citra, dan validasi data.</p>
+          <div className="about-skill-list">
+            {["PLC Omron", "Arduino", "ESP32", "Pengukuran listrik", "Troubleshooting", "Python", "JavaScript", "Node.js", "PHP", "C++", "MySQL"].map((skill) => <span key={skill}>{skill}</span>)}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="section about-chapter" id="tentang-kreatif">
+      <div className="container about-chapter-grid">
+        <div className="about-chapter-title">
+          <Eyebrow>06 · Karya kreatif</Eyebrow>
+          <h2>Cerita, kolaborasi, dan komunikasi.</h2>
+        </div>
+        <div className="about-chapter-body about-role-list">
+          <article><span>April 2024 – Juni 2025</span><h3>Penulis cerita · JanakaPens Komik</h3><p>Mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital.</p></article>
+          <article><h3>Hujan dan Payung Biru</h3><p>Novel yang diterbitkan bersama Penerbit Beranda pada 2025. Menulis memberi saya ruang untuk melatih ketelitian, membangun alur, dan mempertimbangkan pengalaman pembaca.</p></article>
+          <div className="button-row"><ButtonLink to="/proyek">Lihat Proyek <Icon name="arrow" size={18} /></ButtonLink><ButtonLink to="/cv" variant="secondary">Lihat CV</ButtonLink></div>
+        </div>
+      </div>
+    </section>
   </Shell>;
 }
-
 type GithubRepo = { id: number; name: string; description: string | null; html_url: string; language: string | null; stargazers_count: number; updated_at: string };
 type GithubPayload = { profile: { name: string | null; bio: string | null; public_repos: number; followers: number }; repos: GithubRepo[] };
 function Projects() {
@@ -368,12 +462,67 @@ function Novel() {
 }
 
 function CV() {
-  return <Shell><PageHero eyebrow="Profil profesional" title="Curriculum Vitae" description="Lulusan D3 Teknik Elektronika dengan pengalaman embedded, pemeliharaan kelistrikan, quality control, dan penulisan cerita." side={<div className="cv-actions"><a className="button button-primary" href="/cv/nawfal-ulinnuha-faiz-cv.pdf" download><Icon name="download" size={18} /> Unduh CV PDF</a><ButtonLink to="/kontak" variant="secondary">Hubungi Saya</ButtonLink><small>Gunung Putri, Bogor · {siteConfig.email}</small></div>} />
-    <section className="section no-top"><div className="container cv-layout"><aside><div className="avatar large"><img src="/images/nawfal-portrait.jpg" alt="" /></div><h3>Nawfal Ulinnuha Faiz</h3><p>Lulusan D3 Teknik Elektronika yang tertarik pada pengembangan teknologi berbasis integrasi hardware dan software.</p><h4>Keterampilan teknis</h4><div className="tags">{["PLC Omron", "Arduino", "ESP32", "Troubleshooting elektronika", "Alat ukur listrik", "PHP", "Node.js", "Python", "C++", "JavaScript", "MySQL", "AutoCAD", "Eagle", "Microsoft Office"].map((skill) => <span key={skill}>{skill}</span>)}</div><h4>Kemampuan</h4><div className="tags">{["Berpikir kritis", "Penyelesaian masalah", "Kerja sama tim", "Komunikasi"].map((skill) => <span key={skill}>{skill}</span>)}</div><p><a href={`https://github.com/${siteConfig.githubUsername}`} target="_blank" rel="noopener noreferrer">GitHub ↗</a></p></aside><div className="cv-content"><section><div className="cv-title"><span>01</span><h2>Pengalaman</h2></div><div className="timeline-entry"><div><strong>Operator Packing & Jiggering (Magang)</strong><span>PT. Haeng Nam Sejahtera Indonesia · Bogor</span><small>Januari 2026 – April 2026</small></div><p>Quality control produk, identifikasi produk cacat, pengemasan, finishing, dan pemeriksaan deformasi serta dimensi.</p></div><div className="timeline-entry"><div><strong>Teknisi Kelistrikan Kereta (Magang)</strong><span>PT Kereta Api Indonesia DAOP 8 · Surabaya</span><small>Juli 2024 – Desember 2024</small></div><p>Pemeliharaan sistem kelistrikan kereta, pengukuran parameter listrik, pemasangan komponen, dan dokumentasi sesuai prosedur K3.</p></div></section><section><div className="cv-title"><span>02</span><h2>Pendidikan</h2></div><div className="timeline-entry"><div><strong>Politeknik Elektronika Negeri Surabaya</strong><span>D3 Teknik Elektronika · IPK 3,55/4,00</span><small>Juli 2022 – Juli 2025</small></div><p>Proyek akhir: sistem tabulasi suara kertas plano menggunakan image processing pada ESP32 dan GPT-4o Vision API.</p></div></section><section><div className="cv-title"><span>04</span><h2>Kegiatan</h2></div><div className="timeline-entry"><div><strong>Penulis Cerita · JanakaPens Komik</strong><small>April 2024 – Juni 2025</small></div><p>Mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital. <a href="https://www.instagram.com/janaka.studio" target="_blank" rel="noopener noreferrer">Janaka Studio di Instagram ↗</a></p></div><div className="timeline-entry"><div><strong>Wakil Ketua Ekstrakurikuler Komputer · SMAN 1 Pangkah</strong><small>2020 – 2021</small></div><p>Mengelola kegiatan klub dan berkontribusi dalam pengembangan kemampuan anggota di bidang komputer.</p></div><div className="timeline-entry"><div><strong>Relawan · Gerakan Elka Mengajar</strong></div><p>Mengajar dasar elektronika kepada siswa sekolah dasar sebagai bagian dari pengabdian masyarakat.</p></div><div className="timeline-entry"><div><strong>Pembicara · Kegiatan Study Banding, SMA Hang Tuah 1 Surabaya</strong></div><p>Membawakan materi dan berbagi pengalaman tentang penulisan cerita.</p></div></section><section><div className="cv-title"><span>03</span><h2>Proyek terpilih</h2></div><div className="timeline-entry"><div><strong>Licia — Personal Life OS</strong><span>Produk perangkat lunak · Pengembangan berkelanjutan</span></div><p>Sistem pribadi yang menghubungkan AI, produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi. <a href={liciaProject.demo} target="_blank" rel="noopener noreferrer">www.licia.site ↗</a> · <a href={liciaProject.href} target="_blank" rel="noopener noreferrer">Repository ↗</a></p></div><div className="timeline-entry"><div><strong>Tabulasi Suara Kertas Plano Pemilu</strong><span>Proyek akhir D3 Teknik Elektronika · PENS</span></div><p>Sistem yang menghubungkan perangkat counting berbasis ESP32 dengan pembacaan citra dan validasi data.</p></div></section>
-    <section><div className="cv-title"><span>05</span><h2>Sertifikasi</h2></div><div className="timeline-entry"><div><strong>Sertifikat Kompetensi Pengoperasian Alat Ukur · BNSP</strong><small>November 2024 – November 2027</small></div></div><div className="timeline-entry"><div><strong>Pens English Proficiency Test · Skor 450</strong><small>Juni 2025 – Juni 2027</small></div></div></section></div></div></section>
+  return <Shell>
+    <PageHero eyebrow="Profil profesional" title="Curriculum Vitae" description="Lulusan D3 Teknik Elektronika dengan pengalaman embedded, pemeliharaan kelistrikan, quality control, dan penulisan cerita." side={<div className="cv-actions"><a className="button button-primary" href="/cv/nawfal-ulinnuha-faiz-cv.pdf" download><Icon name="download" size={18} /> Unduh CV PDF</a><ButtonLink to="/kontak" variant="secondary">Hubungi Saya</ButtonLink><small>Gunung Putri, Bogor · {siteConfig.email}</small></div>} />
+    <section className="section no-top">
+      <div className="container cv-layout">
+        <aside>
+          <div className="avatar large"><img src="/images/nawfal-portrait.jpg" alt="" /></div>
+          <h3>Nawfal Ulinnuha Faiz</h3>
+          <p>Lulusan D3 Teknik Elektronika yang tertarik pada pengembangan teknologi berbasis integrasi hardware dan software.</p>
+          <h4>Keterampilan teknis</h4>
+          <div className="tags">{["PLC Omron", "Arduino", "ESP32", "Troubleshooting elektronika", "Alat ukur listrik", "PHP", "Node.js", "Python", "C++", "JavaScript", "MySQL", "AutoCAD", "Eagle", "Microsoft Office"].map((skill) => <span key={skill}>{skill}</span>)}</div>
+          <h4>Kemampuan</h4>
+          <div className="tags">{["Berpikir kritis", "Penyelesaian masalah", "Kerja sama tim", "Komunikasi"].map((skill) => <span key={skill}>{skill}</span>)}</div>
+          <p><a href={"https://github.com/" + siteConfig.githubUsername} target="_blank" rel="noopener noreferrer">GitHub ↗</a></p>
+        </aside>
+
+        <div className="cv-content">
+          <section>
+            <div className="cv-title"><span>01</span><h2>Pengalaman</h2></div>
+            <div className="cv-timeline">
+              <div className="timeline-entry"><div><strong>Operator Packing &amp; Jiggering (Magang)</strong><span>PT. Haeng Nam Sejahtera Indonesia · Bogor</span><small>Januari 2026 – April 2026</small></div><p>Quality control produk, identifikasi produk cacat, pengemasan, finishing, dan pemeriksaan deformasi serta dimensi.</p></div>
+              <div className="timeline-entry"><div><strong>Teknisi Kelistrikan Kereta (Magang)</strong><span>PT Kereta Api Indonesia DAOP 8 · Surabaya</span><small>Juli 2024 – Desember 2024</small></div><p>Pemeliharaan sistem kelistrikan kereta, pengukuran parameter listrik, pemasangan komponen, dan dokumentasi sesuai prosedur K3.</p></div>
+            </div>
+          </section>
+
+          <section>
+            <div className="cv-title"><span>02</span><h2>Pendidikan</h2></div>
+            <div className="cv-timeline">
+              <div className="timeline-entry"><div><strong>Politeknik Elektronika Negeri Surabaya</strong><span>D3 Teknik Elektronika · IPK 3,55/4,00</span><small>Juli 2022 – Juli 2025</small></div><p>Proyek akhir: sistem tabulasi suara Kertas C Plano yang menggabungkan perangkat counting berbasis ESP32, pembacaan citra, dan validasi data.</p></div>
+            </div>
+          </section>
+
+          <section>
+            <div className="cv-title"><span>03</span><h2>Proyek terpilih</h2></div>
+            <div className="cv-timeline">
+              <div className="timeline-entry"><div><strong>Licia — Personal Life OS</strong><span>Produk perangkat lunak · Pengembangan berkelanjutan</span></div><p>Sistem pribadi yang menghubungkan AI, produktivitas, pengetahuan, kebiasaan, kesehatan, keuangan, dan refleksi. <a href={liciaProject.demo} target="_blank" rel="noopener noreferrer">www.licia.site ↗</a> · <a href={liciaProject.href} target="_blank" rel="noopener noreferrer">Repository ↗</a></p></div>
+              <div className="timeline-entry"><div><strong>Tabulasi Suara Kertas Plano Pemilu</strong><span>Proyek akhir D3 Teknik Elektronika · PENS</span></div><p>Sistem yang menghubungkan perangkat counting berbasis ESP32 dengan pembacaan citra dan validasi data.</p></div>
+            </div>
+          </section>
+
+          <section>
+            <div className="cv-title"><span>04</span><h2>Kegiatan</h2></div>
+            <div className="cv-timeline">
+              <div className="timeline-entry"><div><strong>Penulis Cerita · JanakaPens Komik</strong><small>April 2024 – Juni 2025</small></div><p>Mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital. <a href="https://www.instagram.com/janaka.studio" target="_blank" rel="noopener noreferrer">Janaka Studio di Instagram ↗</a></p></div>
+              <div className="timeline-entry"><div><strong>Wakil Ketua Ekstrakurikuler Komputer · SMAN 1 Pangkah</strong><small>2020 – 2021</small></div><p>Mengelola kegiatan klub dan berkontribusi dalam pengembangan kemampuan anggota di bidang komputer.</p></div>
+              <div className="timeline-entry"><div><strong>Relawan · Gerakan Elka Mengajar</strong></div><p>Mengajar dasar elektronika kepada siswa sekolah dasar sebagai bagian dari pengabdian masyarakat.</p></div>
+              <div className="timeline-entry"><div><strong>Pembicara · Kegiatan Study Banding, SMA Hang Tuah 1 Surabaya</strong></div><p>Membawakan materi dan berbagi pengalaman tentang penulisan cerita.</p></div>
+            </div>
+          </section>
+
+          <section>
+            <div className="cv-title"><span>05</span><h2>Sertifikasi</h2></div>
+            <div className="cv-timeline">
+              <div className="timeline-entry"><div><strong>Sertifikat Kompetensi Pengoperasian Alat Ukur · BNSP</strong><small>November 2024 – November 2027</small></div></div>
+              <div className="timeline-entry"><div><strong>Pens English Proficiency Test · Skor 450</strong><small>Juni 2025 – Juni 2027</small></div></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
   </Shell>;
 }
-
 type FormState = "default" | "loading" | "success" | "error";
 function Contact() {
   const [state, setState] = useState<FormState>("default");
