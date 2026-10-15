@@ -231,6 +231,52 @@ footer { background: var(--dark); color: var(--white); padding-top: 72px; }
 .github-heading .eyebrow { margin-bottom: 10px; }
 .github-heading h2 { margin-bottom: 0; font-size: 32px; }
 .github-heading > a { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); font-size: 13px; font-weight: 650; }
+
+/* Real project and portfolio imagery */
+.hero-art { min-height: 440px; aspect-ratio: 1.12 / 1; background: var(--dark); border-radius: 3px 82px 3px 3px; box-shadow: 0 22px 60px rgba(23,32,51,.12); }
+.hero-art img { width: 100%; height: 100%; min-height: inherit; position: absolute; inset: 0; object-fit: cover; object-position: 63% center; }
+.hero-art:after { content: ""; position: absolute; inset: 40% 0 0; background: linear-gradient(transparent, rgba(10,18,34,.6)); pointer-events: none; }
+.hero-art-label { position: absolute; z-index: 1; right: 24px; bottom: 23px; color: white; border: 1px solid rgba(255,255,255,.4); background: rgba(13,24,45,.58); backdrop-filter: blur(10px); border-radius: 99px; padding: 9px 14px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.hero-art-label i { font-style: normal; color: #a9c4ff; margin-inline: 4px; }
+.project-visual { padding: 0; }
+.project-visual:before, .project-visual:after { display: none; }
+.project-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; }
+.project-visual span { position: absolute; top: 17px; left: 17px; padding: 7px 9px; border: 1px solid rgba(255,255,255,.5); border-radius: 99px; background: rgba(255,255,255,.88); color: var(--ink); font-size: 8px; }
+.detail-cover.project-cover { display: block; height: clamp(320px, 46vw, 570px); padding: 0; overflow: hidden; }
+.project-cover img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
+.project-cover:before, .project-cover:after { content: none; }
+.project-cover figcaption { position: absolute; left: 22px; bottom: 20px; max-width: calc(100% - 44px); padding: 8px 12px; background: rgba(16,24,41,.78); color: white; font-size: 10px; letter-spacing: .02em; text-transform: none; border-radius: 6px; }
+.book-cover { background: linear-gradient(155deg, #2c61c5 0%, #1d3f82 58%, #111c35 100%); position: relative; isolation: isolate; }
+.book-cover:before { content: ""; position: absolute; z-index: -1; width: 82%; aspect-ratio: 1; top: 18%; left: 14%; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; box-shadow: 0 0 0 28px rgba(255,255,255,.035), 0 0 0 56px rgba(255,255,255,.025); }
+.book-cover:after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(160deg, transparent 48%, rgba(6,14,30,.38)); }
+.book-cover strong { max-width: 100%; font-size: clamp(30px, 3.3vw, 42px); }
+.novel-page-grid .book-cover strong { font-size: clamp(34px, 4vw, 48px); }
+.book-cover small { line-height: 1.6; }
+.process-steps { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 26px; }
+.process-steps > div { min-height: 115px; padding: 16px; display: flex; flex-direction: column; gap: 5px; border-right: 1px solid var(--border); }
+.process-steps > div:last-child { border-right: 0; }
+.process-steps span { color: var(--primary); font-size: 9px; letter-spacing: .12em; }
+.process-steps strong { font-size: 13px; }
+.process-steps small { color: var(--muted); font-size: 10px; }
+.metric-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 28px 0 18px; }
+.metric-grid > div { min-height: 126px; padding: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between; }
+.metric-grid strong { color: var(--primary); font-size: 26px; letter-spacing: -.04em; }
+.metric-grid span { color: var(--muted); font-size: 10px; line-height: 1.55; }
+.source-note { font-size: 11px !important; color: var(--muted); line-height: 1.65 !important; }
+.novel-page-grid .source-note { margin-top: 16px; }
+.alert.error p { color: inherit; margin: 0 0 9px; }
+.alert.error p:last-of-type { margin-bottom: 13px; }
+.alert.error .button-row { gap: 8px; }
+.alert.error .button { font-size: 11px; }
+
+@media (max-width: 760px) {
+  .hero-art { min-height: 0; aspect-ratio: 1 / .92; border-radius: 3px 55px 3px 3px; }
+  .hero-art img { min-height: 0; object-position: 66% center; }
+  .process-steps, .metric-grid { grid-template-columns: 1fr; }
+  .process-steps > div { min-height: 86px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .process-steps > div:last-child { border-bottom: 0; }
+  .metric-grid > div { min-height: 100px; }
+}
 .repo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .repo-card { min-width: 0; padding: 22px; border: 1px solid var(--border); border-radius: var(--radius); background: white; }
 .repo-top, .repo-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 11px; }
