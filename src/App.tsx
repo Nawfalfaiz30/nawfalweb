@@ -451,10 +451,108 @@ function ArticleDetail() {
   const slug = path.split("/").filter(Boolean).at(-1) ?? "";
   const post = getPost(slug);
   if (!post) return <NotFound />;
-  const blocks = renderMarkdown(post.body);
-  return <Shell><article className="article-page"><div className="container"><Breadcrumb items={[["Blog", "/blog"], [post.title, ""]]} /><div className="article-head"><span className="content-label">{post.tags.join(" · ") || "Artikel"} · {new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(`${post.date}T00:00:00`))}</span><h1>{post.title}</h1><p>{post.description}</p><div className="article-author"><div className="avatar">N</div><div><strong>{siteConfig.name}</strong><span>Penulis</span></div></div></div><div className="article-layout article-layout-single"><div className="article-body">{blocks.map((block, index) => block.type === "ul" ? <ul key={index}>{block.text.split("\n").map((item) => <li key={item}>{item}</li>)}</ul> : block.type === "pre" ? <pre key={index}><code>{block.text}</code></pre> : block.type === "h1" || block.type === "h2" ? <h2 key={index}>{block.text}</h2> : block.type === "h3" ? <h3 key={index}>{block.text}</h3> : <p key={index}>{block.text}</p>)}<div className="share-row"><span>Bagikan artikel</span><button onClick={async () => { try { await navigator.clipboard.writeText(window.location.href); setCopied(true); } catch { setCopied(false); } }}><Icon name={copied ? "check" : "copy"} />{copied ? "Tautan disalin" : "Salin tautan"}</button></div></div></div><div className="center-action"><ButtonLink to="/blog" variant="secondary">← Kembali ke blog</ButtonLink></div></div></article></Shell>;
-}
 
+  const blocks = renderMarkdown(post.body);
+  const introBlocks: typeof blocks = [];
+  const sections: Array<{ id: string; title: string; blocks: typeof blocks }> = [];
+  const headingCounts = new Map<string, number>();
+
+  for (const block of blocks) {
+    if (block.type === "h1" || block.type === "h2") {
+      const baseId = block.text
+        .normalize("NFKD")
+        .toLowerCase()
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "bagian";
+      const occurrence = headingCounts.get(baseId) ?? 0;
+      headingCounts.set(baseId, occurrence + 1);
+      sections.push({
+        id: occurrence ? baseId + "-" + (occurrence + 1) : baseId,
+        title: block.text,
+        blocks: [],
+      });
+    } else if (sections.length === 0) {
+      introBlocks.push(block);
+    } else {
+      sections[sections.length - 1].blocks.push(block);
+    }
+  }
+
+  const renderBlock = (block: (typeof blocks)[number], index: number) => {
+    if (block.type === "ul") {
+      return <ul key={index}>{block.text.split("\n").map((item, itemIndex) => <li key={itemIndex}>{item}</li>)}</ul>;
+    }
+    if (block.type === "pre") return <pre key={index}><code>{block.text}</code></pre>;
+    if (block.type === "h3") return <h3 key={index}>{block.text}</h3>;
+    return <p key={index}>{block.text}</p>;
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("id-ID", { dateStyle: "long" })
+    .format(new Date(post.date + "T00:00:00"));
+
+  return <Shell>
+    <article className="article-case-page">
+      <section className="detail-hero article-detail-hero">
+        <div className="container">
+          <Breadcrumb items={[["Blog", "/blog"], [post.title, ""]]} />
+          <span className="content-label">Artikel · {formattedDate}</span>
+          <h1>{post.title}</h1>
+          <p>{post.description}</p>
+          <div className="tags article-detail-tags">
+            {post.tags.map((tag) => <span key={tag}>{tag}</span>)}
+          </div>
+          <div className="article-detail-byline">
+            <div className="avatar">N</div>
+            <div><strong>{siteConfig.name}</strong><span>Penulis · {formattedDate}</span></div>
+          </div>
+          <figure className="detail-cover article-detail-cover">
+            {post.cover
+              ? <img src={post.cover} alt={"Dokumentasi " + post.title} />
+              : <div className="article-detail-cover-art" aria-hidden="true"><span>{post.tags.join(" · ") || "Artikel"}</span><strong>Aa</strong></div>}
+            <figcaption>{post.cover ? "Dokumentasi visual · " + post.title : "Catatan dan pemikiran penulis"}</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="section article-detail-content">
+        <div className="container case-grid article-case-grid">
+          <aside>
+            <span>Dalam artikel</span>
+            {introBlocks.length > 0 && <a href="#ringkasan">00 Ringkasan</a>}
+            {sections.map((section, index) => <a href={"#" + section.id} key={section.id}>
+              {String(index + 1).padStart(2, "0")} {section.title}
+            </a>)}
+          </aside>
+          <div className="reading-column article-reading-column">
+            {introBlocks.length > 0 && <section id="ringkasan">
+              <Eyebrow>Ringkasan</Eyebrow>
+              <h2>Menghubungkan dua sumber data untuk diperiksa bersama.</h2>
+              {introBlocks.map(renderBlock)}
+            </section>}
+            {sections.map((section, index) => <section id={section.id} key={section.id}>
+              <Eyebrow>Bagian {String(index + 1).padStart(2, "0")}</Eyebrow>
+              <h2>{section.title}</h2>
+              {section.blocks.map(renderBlock)}
+            </section>)}
+            <div className="share-row">
+              <span>Bagikan artikel</span>
+              <button onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                  setCopied(true);
+                } catch {
+                  setCopied(false);
+                }
+              }}><Icon name={copied ? "check" : "copy"} />{copied ? "Tautan disalin" : "Salin tautan"}</button>
+            </div>
+            <div className="center-action"><ButtonLink to="/blog" variant="secondary">← Kembali ke blog</ButtonLink></div>
+          </div>
+        </div>
+      </section>
+    </article>
+  </Shell>;
+}
 function Novel() {
   return <Shell><PageHero eyebrow="Karya sastra" title="Hujan dan Payung Biru" description="Novel karya Nawfal Ulinnuha Faiz, diterbitkan oleh Beranda pada 2025." />
     <section className="section no-top"><div className="container novel-page-grid"><div className="book-cover large photo-cover"><img src="/images/hujan-dan-payung-biru-cover.jpg" alt="Sampul novel Hujan dan Payung Biru karya Nawfal Ulinnuha Faiz" /></div><div><span className="status-pill">Novel · 2025</span><h2>Hujan dan Payung Biru</h2><p>Saya menulis novel <em>Hujan dan Payung Biru</em>. Saya juga pernah mengembangkan ide cerita dan berkontribusi dalam pembuatan komik digital bersama JanakaPens Komik. Sinopsis belum dicantumkan di halaman toko, jadi saya belum menambahkan ringkasan cerita agar informasi tetap akurat.</p><dl><div><dt>Penulis</dt><dd>Nawfal Ulinnuha Faiz</dd></div><div><dt>Penerbit</dt><dd>Beranda</dd></div><div><dt>Tahun</dt><dd>2025</dd></div><div><dt>ISBN</dt><dd>978-623-5453-49-1</dd></div><div><dt>Format</dt><dd>14 × 21 cm · vi + 190 halaman</dd></div></dl><div className="button-row"><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Kunjungi toko penerbit <Icon name="external" size={17} /></a><a className="button button-secondary" href="https://tirtabuanamedia.co.id/shop/buku-fiksi-dan-sastra/novel/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat data buku <Icon name="external" size={17} /></a></div></div></div></section>

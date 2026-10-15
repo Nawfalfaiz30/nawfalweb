@@ -4,6 +4,7 @@ description: "Catatan tentang rancangan sistem akhir kuliah yang menggabungkan E
 date: "2026-10-15"
 slug: "menghubungkan-counting-dan-pembacaan-plano"
 tags: ["Proyek Akhir", "ESP32", "Image Processing"]
+cover: "/images/project-counting-device.jpg"
 draft: false
 ---
 

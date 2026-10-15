@@ -5,6 +5,7 @@ type BlogPost = {
   date: string;
   tags: string[];
   draft: boolean;
+  cover?: string;
   body: string;
 };
 
@@ -23,8 +24,9 @@ function parsePost(raw: string, path: string): BlogPost | null {
   const slug = frontmatter.slug?.replace(/^['"]|['"]$/g, "") || path.split("/").pop()?.replace(/\.md$/, "");
   const tags = (frontmatter.tags || "").replace(/^\[|\]$/g, "").split(",").map((tag) => tag.trim().replace(/^['"]|['"]$/g, "")).filter(Boolean);
   const draft = frontmatter.draft === "true";
+  const cover = frontmatter.cover?.replace(/^['"]|['"]$/g, "");
   if (!title || !description || !date || !slug) throw new Error(`Metadata title, description, date, dan slug wajib: ${path}`);
-  return { slug, title, description, date, tags, draft, body: match[2].trim() };
+  return { slug, title, description, date, tags, draft, cover, body: match[2].trim() };
 }
 
 const allPosts = Object.entries(files).map(([path, raw]) => parsePost(raw, path)).filter((post): post is BlogPost => post !== null);
