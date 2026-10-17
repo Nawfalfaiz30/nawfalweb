@@ -191,7 +191,7 @@ function ProjectCard({ project }: { project: { title: string; summary: string; t
     title={project.title}
     summary={project.summary}
     tags={project.tags}
-    visual={<img src="/images/project-counting-device.jpg" alt="Perangkat penghitung pemilih berbasis ESP32 dengan layar LCD" loading="lazy" decoding="async" />}
+    visual={<img src="/images/project-counting-device.jpg" alt="Perangkat penghitung pemilih berbasis ESP32 dengan layar LCD" width={591} height={472} loading="lazy" decoding="async" />}
     visualLabel="Perangkat uji · Buku PA"
     actions={<>
       <ButtonLink to={project.detailTo ?? `/proyek/${featuredProject.slug}`}>Baca studi kasus <Icon name="arrow" size={17} /></ButtonLink>
@@ -298,7 +298,7 @@ function Home() {
           <div className="hero-social"><span>Terhubung melalui</span><SocialIcons /></div>
         </div>
         <div className="hero-art">
-          <img src="/images/portfolio-workspace.jpg" alt="Ilustrasi meja kerja dengan mikrokontroler, laptop, formulir, dan buku catatan" />
+          <img src="/images/portfolio-workspace.jpg" alt="Ilustrasi meja kerja dengan mikrokontroler, laptop, formulir, dan buku catatan" width={1200} height={800} fetchPriority="high" decoding="async" />
           <span className="hero-art-label">Software <i>×</i> Embedded</span>
         </div>
       </div>
@@ -306,7 +306,7 @@ function Home() {
     <section className="intro-strip"><div className="container intro-grid"><span>01 — Tentang</span><h2>Sebuah ruang untuk memperkenalkan diri melalui karya dan pemikiran.</h2><div><p>Website ini merangkum perjalanan, eksplorasi, proyek yang saya bangun, serta kanal komunikasi resmi dalam satu tempat.</p><ButtonLink to="/tentang" variant="text">Kenali Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
     <section className="section"><div className="container"><SectionHeading eyebrow="Proyek unggulan" title="Software yang menyatukan banyak bagian kehidupan." description="Licia adalah proyek utama yang sedang saya kembangkan: Personal Life OS dengan AI, sinkronisasi, dan alur kerja yang saling terhubung." action={<ButtonLink to={`/proyek/${liciaProject.slug}`} variant="secondary">Studi kasus <Icon name="arrow" size={17} /></ButtonLink>} /><LiciaProjectCard /></div></section>
     <section className="section"><div className="container"><SectionHeading eyebrow="Proyek akademik" title="Teknologi untuk data pemilu." description="Proyek akhir D3 yang menggabungkan perangkat embedded, pengolahan citra, dan AI vision." action={<ButtonLink to="/proyek" variant="secondary">Semua proyek <Icon name="arrow" size={17} /></ButtonLink>} /><ProjectCard project={featuredProject} /></div></section>
-    <section className="section section-muted"><div className="container"><SectionHeading eyebrow="Jurnal" title="Tulisan & catatan." description="Catatan teknis, proses belajar, dan hal-hal yang saya temui saat membangun sebuah sistem." />{publishedPosts.length ? <div className="blog-grid">{publishedPosts.slice(0, 2).map((post) => <PostCard key={post.slug} post={post} />)}</div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/blog" variant="secondary">Lihat Blog <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
+    <section className="section section-muted"><div className="container"><SectionHeading eyebrow="Jurnal" title="Tulisan & catatan." description="Catatan teknis, proses belajar, dan hal-hal yang saya temui saat membangun sebuah sistem." />{publishedPosts.length ? <div className={"blog-grid" + (publishedPosts.length === 1 ? " blog-grid-single" : "")}>{publishedPosts.slice(0, 2).map((post) => <PostCard key={post.slug} post={post} />)}</div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/blog" variant="secondary">Lihat Blog <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
     <section className="section"><div className="container novel-card"><div className="book-cover photo-cover"><img src="/images/hujan-dan-payung-biru-cover.jpg" alt="Sampul novel Hujan dan Payung Biru karya Nawfal Ulinnuha Faiz" loading="lazy" decoding="async" /></div><div className="novel-copy"><Eyebrow>Karya sastra</Eyebrow><h2>Saya juga menulis cerita.</h2><p><em>Hujan dan Payung Biru</em> diterbitkan oleh Beranda pada 2025. Saya juga pernah menulis cerita untuk JanakaPens Komik.</p><a className="button button-primary" href="https://store.intranspublishing.com/hujan-dan-payung-biru/" target="_blank" rel="noopener noreferrer">Lihat detail buku <Icon name="external" size={17} /></a></div></div></section>
     <ContactBand />
   </Shell>;
@@ -482,7 +482,7 @@ function Blog() {
   const [search, setSearch] = useState("");
   const posts = publishedPosts.filter((post) => `${post.title} ${post.description} ${post.tags.join(" ")}`.toLowerCase().includes(search.toLowerCase()));
   return <Shell><PageHero eyebrow="Jurnal pribadi" title="Tulisan & Catatan" description="Artikel dan catatan tentang produk yang saya bangun, teknologi, proses belajar, serta penulisan." />
-    <section className="section no-top"><div className="container">{publishedPosts.length > 0 && <div className="blog-toolbar"><div><strong>{posts.length} tulisan</strong><span>Artikel Markdown · diurutkan terbaru</span></div><label className="search"><span className="sr-only">Cari artikel</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari artikel..." /></label></div>}{posts.length ? <div className="blog-grid blog-grid-two">{posts.map((post) => <PostCard key={post.slug} post={post} />)}</div> : publishedPosts.length ? <div className="empty-note"><Icon name="copy" /><div><strong>Tulisan tidak ditemukan.</strong><span>Coba kata kunci yang berbeda.</span></div></div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/kontak" variant="secondary">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
+    <section className="section no-top"><div className="container">{publishedPosts.length > 0 && <div className="blog-toolbar"><div><strong>{posts.length} tulisan</strong><span>Artikel Markdown · diurutkan terbaru</span></div><label className="search"><span className="sr-only">Cari artikel</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari artikel..." /></label></div>}{posts.length ? <div className={"blog-grid blog-grid-two" + (posts.length === 1 ? " blog-grid-single" : "")}>{posts.map((post) => <PostCard key={post.slug} post={post} />)}</div> : publishedPosts.length ? <div className="empty-note"><Icon name="copy" /><div><strong>Tulisan tidak ditemukan.</strong><span>Coba kata kunci yang berbeda.</span></div></div> : <ArticleEmpty />}<div className="center-action"><ButtonLink to="/kontak" variant="secondary">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink></div></div></section>
   </Shell>;
 }
 

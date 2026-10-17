@@ -27,6 +27,7 @@ export const liciaProject = {
 
 export const featuredProject = {
   slug: "tabulasi-suara-kertas-plano",
+  number: "02",
   title: "Tabulasi Suara Kertas Plano Pemilu",
   summary: "Sistem tabulasi berbasis image processing pada ESP32 untuk menghitung pemilih dan GPT-4o Vision API untuk mengekstrak data dari Kertas C Plano, dilengkapi validasi otomatis berbasis perbandingan data.",
   tags: ["ESP32", "Image Processing", "GPT-4o Vision API"],
