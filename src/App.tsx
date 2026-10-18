@@ -132,7 +132,7 @@ function Header() {
           {navItems.map(([label, href]) => <Link key={href} to={href} className={path === href ? "active" : ""}>{label}</Link>)}
         </nav>
         <div className="header-actions">
-          <ButtonLink to="/kontak">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink>
+          {path !== "/kontak" && <ButtonLink to="/kontak">Hubungi Saya <Icon name="arrow" size={17} /></ButtonLink>}
           <button ref={menuButtonRef} className="menu-button" aria-label="Buka menu" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(true)}><Icon name="menu" /></button>
         </div>
       </div>
@@ -228,20 +228,33 @@ function ProjectShowcaseCard({ category, number, title, summary, tags, visual, v
 }
 
 
+const LICIA_MODULES = ["Task", "Calendar", "Notes", "Habits", "Finance", "Health", "Focus", "AI"] as const;
+const LICIA_TODAY_ITEMS = ["Rencana mingguan", "Refleksi harian", "Catatan pembelajaran"] as const;
+
 function LiciaProjectVisual() {
-  return <div className="licia-preview" role="img" aria-label="Ilustrasi tampilan pembuka Licia Personal Life OS">
-    <div className="licia-preview-header"><span className="licia-preview-brand"><b>L</b> LICIA PERSONAL LIFE OS</span><span className="licia-preview-version">Licia 2.0</span></div>
-    <div className="licia-preview-body">
-      <span className="licia-preview-kicker">YOUR LIFE, CONNECTED</span>
-      <h3>Satu ruang untuk berpikir, merencanakan, dan menjalani hidup.</h3>
-      <p>Tugas, kalender, catatan, keuangan, kebiasaan, fokus, dan AI bekerja sebagai satu sistem.</p>
-      <div className="licia-preview-actions"><span>Masuk ke Licia</span><span>Lihat panduan</span></div>
-    </div>
-    <div className="licia-preview-features">
-      <div><strong>Hari Ini</strong><span>Agenda & prioritas</span></div>
-      <div><strong>AI kontekstual</strong><span>Aksi terverifikasi</span></div>
-      <div><strong>Offline-first</strong><span>Sinkronisasi kembali</span></div>
-      <div><strong>Privasi</strong><span>Kontrol akses & audit</span></div>
+  return <div className="licia-preview" role="img" aria-label="Ilustrasi antarmuka Licia Personal Life OS: jendela aplikasi dengan rail modul dan panel Hari Ini. Ilustrasi CSS, bukan tangkapan layar produk.">
+    <div className="licia-preview-window">
+      <div className="licia-preview-window-bar">
+        <span className="licia-preview-window-dots" aria-hidden="true"><i /><i /><i /></span>
+        <span className="licia-preview-window-title">Licia — Hari Ini</span>
+      </div>
+      <div className="licia-preview-window-body">
+        <div className="licia-preview-rail" aria-hidden="true">
+          {LICIA_MODULES.map((module) => <span key={module} className="licia-preview-rail-item">{module}</span>)}
+        </div>
+        <div className="licia-preview-panel">
+          <div className="licia-preview-today">
+            <strong>Hari Ini</strong>
+            <ul>
+              {LICIA_TODAY_ITEMS.map((item) => <li key={item}><i aria-hidden="true" />{item}</li>)}
+            </ul>
+          </div>
+          <div className="licia-preview-ai-card">
+            <strong>Konteks AI · ringkasan harian</strong>
+            <span>Ringkasan konteks dari modul yang terhubung.</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>;
 }
@@ -606,7 +619,7 @@ function Novel() {
 
 function CV() {
   return <Shell>
-    <PageHero eyebrow="Profil profesional" title="Curriculum Vitae" description="Lulusan D3 Teknik Elektronika dengan pengalaman embedded, pemeliharaan kelistrikan, quality control, dan penulisan cerita." side={<div className="cv-actions"><a className="button button-primary" href="/cv/nawfal-ulinnuha-faiz-cv.pdf" download><Icon name="download" size={18} /> Unduh CV PDF</a><ButtonLink to="/kontak" variant="secondary">Hubungi Saya</ButtonLink><small>Gunung Putri, Bogor · {siteConfig.email}</small></div>} />
+    <PageHero eyebrow="Profil profesional" title="Curriculum Vitae" description="Lulusan D3 Teknik Elektronika dengan pengalaman embedded, pemeliharaan kelistrikan, quality control, dan penulisan cerita." side={<div className="cv-actions"><a className="button button-primary" href="/cv/nawfal-ulinnuha-faiz-cv.pdf" download><Icon name="download" size={18} /> Unduh CV PDF (104 KB)</a><ButtonLink to="/kontak" variant="secondary">Hubungi Saya</ButtonLink><small>Gunung Putri, Bogor · {siteConfig.email}</small></div>} />
     <section className="section no-top">
       <div className="container cv-layout">
         <aside>

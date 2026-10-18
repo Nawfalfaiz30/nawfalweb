@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Nawfal Ulinnuha Faiz",
   domain: "nawfalulinnuhafaiz.my.id",
-  url: "https://nawfalulinnuhafaiz.my.id",
+  url: "https://www.nawfalulinnuhafaiz.my.id",
   email: "nawfalulinnuhafaiz82@gmail.com",
   githubUsername: "NawfalFaiz30",
   featuredRepositoryNames: ["licia", "nawfalweb"],
