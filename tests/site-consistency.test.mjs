@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,9 +20,12 @@ test("siteConfig.url memakai host www", () => {
   assert.equal(siteUrl, "https://www.nawfalulinnuhafaiz.my.id");
 });
 
-test("public/sitemap.xml memakai host yang sama dengan siteConfig.url", () => {
+test("sitemap hanya dihasilkan prerender (public/sitemap.xml tidak ada)", () => {
+  assert.ok(!existsSync(path.join(root, "public", "sitemap.xml")), "public/sitemap.xml tidak boleh ada; scripts/prerender.mjs satu-satunya generator sitemap");
+  const distSitemap = path.join(root, "dist", "sitemap.xml");
+  if (!existsSync(distSitemap)) return;
   const siteHost = new URL(getSiteUrl()).host;
-  const sitemap = read("public/sitemap.xml");
+  const sitemap = readFileSync(distSitemap, "utf8");
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.ok(locs.length > 0, "sitemap.xml harus memuat setidaknya satu <loc>");
   for (const loc of locs) assert.equal(new URL(loc).host, siteHost, "loc memakai host berbeda: " + loc);

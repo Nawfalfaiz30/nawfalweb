@@ -156,7 +156,7 @@ function Footer() {
         <p>Ruang digital untuk profil, proyek, tulisan, dan kanal komunikasi resmi.</p>
         <span className="domain">{siteConfig.domain}</span>
       </div>
-      <div><h3>Jelajahi</h3>{navItems.slice(1, 6).map(([label, href]) => <Link key={href} to={href}>{label}</Link>)}</div>
+      <div><h3>Jelajahi</h3>{navItems.slice(1, 6).map(([label, href]) => <Link key={href} to={href}>{label}</Link>)}<Link to="/sosial">Social Hub</Link></div>
       <div><h3>Terhubung</h3>{socialLinks.slice(0, 4).map((item) => <Link key={item.name} to={item.href} external>{item.name}</Link>)}</div>
       <div><h3>Kontak</h3><a href={`mailto:${siteConfig.email}`} className="email">{siteConfig.email}</a><ButtonLink to="/kontak" variant="text">Kirim pesan <Icon name="arrow" size={17} /></ButtonLink></div>
     </div>
